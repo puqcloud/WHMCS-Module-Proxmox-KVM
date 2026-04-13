@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="250" viewBox="0 0 440 250">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#16213e;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#6c3ce0;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="440" height="250" fill="url(#bg)" rx="8"/>
+
+  <!-- Accent line top -->
+  <rect x="0" y="0" width="440" height="4" fill="url(#accent)" rx="2"/>
+
+  <!-- Server/VM icon -->
+  <g transform="translate(30, 35)">
+    <!-- Server rack -->
+    <rect x="10" y="5" width="80" height="26" rx="4" fill="none" stroke="#8b5cf6" stroke-width="2"/>
+    <circle cx="22" cy="18" r="3" fill="#8b5cf6" opacity="0.8"/>
+    <rect x="32" y="14" width="40" height="3" rx="1" fill="#4a5568" opacity="0.6"/>
+    <rect x="32" y="20" width="30" height="3" rx="1" fill="#4a5568" opacity="0.4"/>
+
+    <rect x="10" y="37" width="80" height="26" rx="4" fill="none" stroke="#8b5cf6" stroke-width="2"/>
+    <circle cx="22" cy="50" r="3" fill="#6c3ce0" opacity="0.8"/>
+    <rect x="32" y="46" width="40" height="3" rx="1" fill="#4a5568" opacity="0.6"/>
+    <rect x="32" y="52" width="30" height="3" rx="1" fill="#4a5568" opacity="0.4"/>
+
+    <rect x="10" y="69" width="80" height="26" rx="4" fill="none" stroke="#8b5cf6" stroke-width="2"/>
+    <circle cx="22" cy="82" r="3" fill="#a78bfa" opacity="0.8"/>
+    <rect x="32" y="78" width="40" height="3" rx="1" fill="#4a5568" opacity="0.6"/>
+    <rect x="32" y="84" width="30" height="3" rx="1" fill="#4a5568" opacity="0.4"/>
+  </g>
+
+  <!-- Shield icon (firewall/security) -->
+  <g transform="translate(115, 80)">
+    <path d="M15,2 L28,8 L28,18 C28,26 22,32 15,35 C8,32 2,26 2,18 L2,8 Z" fill="none" stroke="#6c3ce0" stroke-width="2" opacity="0.6"/>
+    <path d="M11,18 L14,21 L20,14" fill="none" stroke="#8b5cf6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- Module title -->
+  <text x="220" y="52" font-family="Arial, sans-serif" font-size="26" font-weight="bold" fill="white" text-anchor="start">Proxmox</text>
+  <text x="220" y="84" font-family="Arial, sans-serif" font-size="26" font-weight="bold" fill="white" text-anchor="start">KVM</text>
+
+  <!-- Subtitle -->
+  <text x="220" y="111" font-family="Arial, sans-serif" font-size="13" fill="#94a3b8" text-anchor="start">WHMCS Server Module</text>
+
+  <!-- Divider -->
+  <rect x="220" y="124" width="60" height="2" fill="#6c3ce0" rx="1"/>
+
+  <!-- Description -->
+  <text x="220" y="148" font-family="Arial, sans-serif" font-size="11" fill="#64748b" text-anchor="start">Automated KVM VM provisioning</text>
+  <text x="220" y="164" font-family="Arial, sans-serif" font-size="11" fill="#64748b" text-anchor="start">on Proxmox VE with firewall,</text>
+  <text x="220" y="180" font-family="Arial, sans-serif" font-size="11" fill="#64748b" text-anchor="start">backups, snapshots &amp; noVNC</text>
+
+  <!-- PUQ Cloud branding -->
+  <g transform="translate(30, 210)">
+    <text x="0" y="15" font-family="Arial, sans-serif" font-size="22" font-weight="bold" fill="#6c3ce0">PUQ</text>
+    <text x="55" y="15" font-family="Arial, sans-serif" font-size="12" fill="#64748b">cloud</text>
+  </g>
+
+  <!-- Version badge -->
+  <g transform="translate(362, 218)">
+    <rect x="0" y="0" width="55" height="20" rx="4" fill="#6c3ce0" opacity="0.2" stroke="#6c3ce0" stroke-width="1"/>
+    <text x="27" y="14" font-family="Arial, sans-serif" font-size="11" fill="#a78bfa" text-anchor="middle">v3.0</text>
+  </g>
+</svg>

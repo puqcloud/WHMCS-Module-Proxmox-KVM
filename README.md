@@ -1,88 +1,97 @@
-# WHMCS-Module-Proxmox-KVM
-The module allows your customers to provision and manage KVM machines on Proxmox panel with WHMCS system.
 # Description
 
-## Proxmox KVM **[WHMCS](https://puqcloud.com/link.php?id=77)**
+### Proxmox KVM module **[WHMCS](https://puqcloud.com/link.php?id=77)**
+#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [FAQ](https://faq.puqcloud.com/)
 
-#####  [Order now](https://puqcloud.com/index.php?rp=/store/whmcs-module-proxmox-kvm) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [FAQ](https://faq.puqcloud.com/)
+## Proxmox KVM WHMCS Module
 
-### Preface
+The PUQ Proxmox KVM module for WHMCS provides automated provisioning, management, and billing of KVM virtual machines on Proxmox VE clusters. The module consists of two parts: the **Server Module** that handles VM provisioning and the client/admin interface, and the **Addon Module** that manages IP address pools, DNS zones, cron tasks, and provides a centralized management dashboard.
 
->Starting with version 1.3 **ProxmoxKVM WHMCS module**, integrates with the **PUQ Customization WHMCS Addon (FREE)** for a thinner tuning of parameters and configurations.
->Check out the PUQ Customization WHMCS Addon
->
->https://doc.puq.info/books/puq-customization-whmcs-addon
->
->https://download.puqcloud.com/WHMCS/addons/PUQ-Customization/
+The module allows your customers to provision and manage KVM machines on your Proxmox server or Proxmox cluster. It exposes virtually all functions of Proxmox directly from the WHMCS panel without forcing the user (or admin) to log in to Proxmox itself. This greatly simplifies customer account management, improves customer satisfaction and reduces the number of support requests.
 
-The module allows your customers to provision and manage KVM machines using the Proxmox server or Proxmox cluster.
+The module is intended for advanced users — installation and correct configuration require knowledge and experience in server and network administration. Although the documentation is detailed and allows the module to be installed by an intermediate user, we strongly suggest following the order defined in the installation chapter.
 
-The module allows you to manage virtually all functions available in Proxmox directly from the WHMCS panel without going to the Proxmox panel. This greatly simplifies and facilitates customer account management, improves customer satisfaction and reduces the number of support requests.
+> **Changed in v3.0.** Starting from v3.0 the module ships its own dedicated addon module (`puq_proxmox_kvm`) — the separate **PUQ Customization** addon required for v1.3–v2.x is **no longer needed**. On first activation the new addon automatically migrates IP pools, DNS zones and VM records from the old `puq_customization` tables.
 
->To work properly, the module requires a previously configured and working Proxmox server or Proxmox cluster (we have prepared [detailed instructions here](https://doc.puq.info/books/proxmoxkvm-whmcs-module/chapter/installation-and-configuration-guide)) and, apart from other requirements, also the available IP address range
+### Installation service
 
->The module is intended for advanced users, because the installation and correct configuration requires knowledge and experience in the management and configuration of servers and the network. Although the instructions are detailed and allow the module to be installed by an intermediate user, we suggest that when installing the module, follow the order in the installation documentation.
+If you don't feel comfortable performing the installation yourself, PUQcloud offers an installation service in two variants — **module installation and configuration** and **full implementation**. See [puqcloud.com](https://puqcloud.com/whmcs-module-proxmox-kvm.php) for details.
 
->For technical reasons, the module will not support LVM-based storage(Due to the fact that they do not use in the cluster as a shared storage).
+---
 
->We provide installation service in two variants: module installation and configuration and full implementation. Please [look here](https://panel.puqcloud.com/link.php?id=27) for details. You can [order service here](https://panel.puqcloud.com/index.php?rp=/store/whmcs-module-proxmox-kvm/whmcs-proxmox-kvm-installation-service).
+## Main Features
 
-The module, fully installed and correctly implemented in the system, offers the following functionalities.
+- **Automated VM provisioning** — automatic deployment of KVM virtual machines via linked clone or full clone with state machine-based deploy pipeline
+- **Post-clone migration** — automatic VM migration to the target node with correct storage after cloning, supporting cross-node deployment with local storage
+- **VM lifecycle management** — create, suspend, unsuspend, terminate, reinstall, change package (upgrade/downgrade) with step-by-step state machine and retry logic
+- **Firewall management** — configurable firewall policies, anti-spoofing IPSet rules, and client-side firewall rule management (add, delete, reorder)
+- **Snapshot management** — create, rollback, and remove snapshots with configurable lifetime and automatic cleanup
+- **Backup management** — manual and scheduled backups with restore capability, per-day schedule configuration
+- **IPv4/IPv6 IP address pool management** — centralized IP allocation with per-server pools, automatic bridge/VLAN selection
+- **DNS zone management** — Cloudflare and HestiaCP integration for forward and reverse DNS automation
+- **noVNC web console** — secure browser-based console access via VNC proxy with one-time authentication links
+- **Cloud-init support** — automatic hostname, IP, DNS, user, and password configuration via cloud-init
+- **ISO mounting** — mount and unmount ISO images from Proxmox storage for OS installation
+- **Resource usage charts** — real-time CPU, RAM, disk I/O, and network usage graphs with historical data
+- **Usage-based billing** — network traffic metering (inbound/outbound) with WHMCS Metric Billing
+- **Configurable client permissions** — per-product control over which features are available to customers (start, stop, noVNC, charts, reinstall, reset password, revDNS, ISO mount, firewall)
+- **Multi-language support** — 25 languages including Arabic, Azerbaijani, Catalan, Chinese, Croatian, Czech, Danish, Dutch, English, Estonian, Farsi, French, German, Hebrew, Hungarian, Italian, Macedonian, Norwegian, Polish, Romanian, Russian, Spanish, Swedish, Turkish, and Ukrainian
+- **Cron system** — flexible cron with two modes (WHMCS hook or standalone), configurable intervals per task, CLI tools, lock management
+- **Admin product settings UI** — custom Bootstrap-based settings panel for VM configuration, storage, network, firewall, integrations, email templates, and client permissions
 
-### Module Functions:
+---
 
-- Automatic creation of a KVM virtual machine
-- Service suspend and unsuspend function
-- Service termination function. Removes a virtual machine and all dependencies associated with it. Adds a note on the product details page in WHMCS admin panel with the date and IP address that was used by this virtual machine.
-- Automatically adds additional disk to a virtual machine if an additional disk is configured in the product configuration (It is possible to provision VM with two separately configured disks - a system booting one and second one).
-- Automatically configures virtual machine parameters such as: 
-    - the number of CPU processor cores,
-    - RAM,
-    - disk bandwidth limits such as megabytes per second and the number of I/O operations,
-    - network card bandwidth limits.
-    - IPv4 and IPv6
-    - DNS records forward and reverse
-- Module supports multilingualism **(Arabic, Azerbaijani, Catalan, Chinese, Croatian, Czech, Danish, Dutch, English, Estonian, Farsi, French, German, Hebrew, Hungarian, Italian, Macedonian, Norwegian, Polish, Romanian, Russian, Spanish, Swedish, Turkish, Ukrainian)**
-- Automatically selects an available IP address from a list of IP addresses provided during initial module installation and configuration.
-- Automatically configures the virtual machine system user and password which is then sent by email to customer.
-- Automatically adds rules to the firewall that allow you to avoid spoofing the IP address of the virtual machine.
-- Configures the *cloud-init* device to auto-configure the virtual machine.
-- Snapshot and backup management. Admin can define options for its clients. *The number of snapshots and backups is configured by additional options to the product, and if it is not specified or set to zero, then the function of snapshots and backup will not be available to the client.*
-- Managing forward and reverse zone DNS records - system prepares detailed information with the DNS zone data in the ticket and by providing an endpoint URL address that you can use for automation
-- Integrated noVNC WEB console for KVM access
-- Implemented the function of reinstalling the operating system with the ability to change the operating system to another.
-- The function of resetting the operating system (root) password has been implemented in client and admin panel.
-- Statistics on the use of virtual machine resources in the form of graphs (CPU, RAM, disk, network). Real-time metric data are imported from hypervisor.
-- Under certain conditions, you can change the virtual machine's identifier to a specific service (the machine with the given identifier must be created on the Proxmox server / cluster and not be connected to any other service). This can be useful when you want to attach existing machines to a module. Machines added in this way may not have all management options
-- The function of mount an ISO image to a virtual machine has been implemented.
-- We have prepared templates for the most common distributions but You can create additional ones - we provide brief requirements later in this guide.
-- Module allows when the virtual machine template has 2 disks that can be stored on different network storages. For example, the system disk of the virtual machine is stored on the fast storage, and an additional disk is stored on the slow storage, designed for backups inside the virtual machine.
-- For ISO images, you can use another network storage
-- Configurable Option (Backups/Snapshots/CPU/RAM/IPv4/IPv6)
+## System Requirements
 
+| Requirement | Minimum          |
+|-------------|------------------|
+| WHMCS | 8.x or higher    |
+| PHP | 7.4, 8.1, or 8.2 |
+| Proxmox VE | 8.x or higher    |
+| ionCube Loader | v13 or newer     |
 
-- - - - - -
+---
 
-WHMCS minimal version: 8 +
+## Module Components
 
-Minimal Proxmox version: 7 +
+| Component | Type | Directory |
+|-----------|------|-----------|
+| Server Module | `puqProxmoxKVM` | `modules/servers/puqProxmoxKVM/` |
+| Addon Module | `puq_proxmox_kvm` | `modules/addons/puq_proxmox_kvm/` |
 
-### Screenshots
+The **Addon Module** is required for the server module to function. It manages:
+- IP address pools (IPv4 and IPv6)
+- DNS zones (Cloudflare, HestiaCP)
+- VM management dashboard
+- Cron task orchestration
+- Global settings (API timeouts, migration, cron intervals)
 
-![image](https://github.com/PUQ-sp-z-o-o/WHMCS-Module-Proxmox-KVM/assets/81689153/2efc1e27-0662-48f1-abce-4c20c408fb1c)
+---
 
-![image](https://github.com/PUQ-sp-z-o-o/WHMCS-Module-Proxmox-KVM/assets/81689153/52a2a142-e938-42df-9748-f939748d3ab9)
+## Links
 
-![image](https://github.com/PUQ-sp-z-o-o/WHMCS-Module-Proxmox-KVM/assets/81689153/a905839b-34fd-4792-8576-185e4f0a6b3c)
+- **Product page:** [https://puqcloud.com/whmcs-module-proxmox-kvm.php](https://puqcloud.com/whmcs-module-proxmox-kvm.php)
+- **Documentation:** [https://doc.puq.info/books/proxmoxkvm-whmcs-module](https://doc.puq.info/books/proxmoxkvm-whmcs-module)
+- **GitHub:** [https://github.com/puqcloud/WHMCS-Module-Proxmox-KVM](https://github.com/puqcloud/WHMCS-Module-Proxmox-KVM)
+- **Support:** [https://puqcloud.com/submitticket.php](https://puqcloud.com/submitticket.php?step=2&deptid=1)
+- **Community:** [https://community.puqcloud.com/](https://community.puqcloud.com/)
 
-![image](https://github.com/PUQ-sp-z-o-o/WHMCS-Module-Proxmox-KVM/assets/81689153/e2ef55be-0691-4c4b-92f5-61b8ce2023b1)
+---
 
-![image](https://github.com/PUQ-sp-z-o-o/WHMCS-Module-Proxmox-KVM/assets/81689153/030eb710-b3e5-4ce7-83ec-7dd2c3dd37ce)
+## Screenshots
 
-![image](https://github.com/PUQ-sp-z-o-o/WHMCS-Module-Proxmox-KVM/assets/81689153/fd56f743-8d6e-4c58-bbae-f4a04cfc9473)
+### Client Area — VM Overview
 
-![image](https://github.com/PUQ-sp-z-o-o/WHMCS-Module-Proxmox-KVM/assets/81689153/48fb7a12-cd3c-48d2-a61f-73e3986558e4)
+![Client area overview](img/client-area-manage-overview.png)
 
-![image](https://github.com/PUQ-sp-z-o-o/WHMCS-Module-Proxmox-KVM/assets/81689153/865e0a15-58a3-4763-ad6c-58f1e5f4159e)
+### Client Area — Firewall Rules
 
-![image](https://github.com/PUQ-sp-z-o-o/WHMCS-Module-Proxmox-KVM/assets/81689153/d97c7c7d-e7f8-4d1c-a5d9-8add40f98d94)
+![Client area firewall](img/client-area-firewall-rules.png)
+
+### Admin Area — Product Configuration
+
+![Admin product config](img/admin-product-config-full.png)
+
+### Addon Module — Dashboard
+
+![Addon dashboard](img/addon-dashboard-home.png)

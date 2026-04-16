@@ -5,6 +5,29 @@
 
 ---
 
+## v3.1 — 16-04-2026
+
+A stability and admin UX release on top of v3.0. Focused on making product configuration self-explanatory and hardening the cron against bad data.
+
+### Actionable errors on the Product Configuration page
+
+The custom Module Settings UI no longer fails silently when something is wrong with the product's Server Group. Instead of a generic "No server found" message, the page now shows a contextual banner with an exact fix-it hint and highlights the affected fields (Node, OS Template, Storages):
+
+- **"Server Group is not selected"** — when the product hasn't been saved or no group is assigned.
+- **"Server Group no longer exists"** — when the referenced group was deleted.
+- **"Server Group has no servers assigned"** — with a direct path to `Setup → Products/Services → Servers → Edit group`.
+- **"Server Group references a missing server"** — when the group still exists but points to a deleted server.
+
+### Cron stability — safe handling of incomplete network data
+
+Fixed a regression where one service with a missing IP-pool entry or server address field could crash the entire `processVirtualMachines` cron run on PHP 8.0+. All assignments from `server_address_list` and IP pool data (netmask, gateway, DNS, bridge, VLAN) are now null-safe, so the cron continues processing the rest of the queue even if a single service has stale or incomplete network configuration.
+
+### Statistics collection fix
+
+`GetStatistics()` now resolves the VM's current Proxmox node before collecting RRD data and safely skips services whose remote node is not yet known (for example, services still in the deployment queue). Prevents spurious errors in the statistics cron.
+
+---
+
 ## v3.0 (April 2026) — Major Release
 
 Version 3.0 is a complete rewrite with a new architecture, dedicated addon module, and dozens of new features. This is the biggest update since the initial release.

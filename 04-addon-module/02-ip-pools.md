@@ -13,7 +13,9 @@ IP Pools allow you to manage blocks of IPv4 and IPv6 addresses that are automati
 
 Navigate to **Addons > PUQ Proxmox KVM > IP Pools** to view all configured pools.
 
-![IP Pools list](../img/addon-ip-pools-list.png)
+![IP Pools list with rDNS zone hints](../img/ip-pools-with-rdns-zone-hint.png)
+
+> **New in v3.2.** The Addresses column now shows the ready-made **rDNS zone name** that corresponds to each pool's prefix — copy it directly into the [DNS Zones](03-dns-zones.md) form when you want reverse DNS for that pool's IPs. No need to compute nibble reversals by hand. Both IPv4 (`/8`, `/16`, `/24`) and IPv6 (any nibble-aligned prefix) are supported.
 
 The table displays:
 

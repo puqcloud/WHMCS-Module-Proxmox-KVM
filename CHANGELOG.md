@@ -5,6 +5,96 @@
 
 ---
 
+## v3.2 — 18-04-2026
+
+A DNS, lifecycle and admin-UX release. Key goal: long-running operations (provisioning many DNS records, tearing down a service with large backups) must never time out the WHMCS request. Both **Set DNS records** and **Terminate** now run asynchronously in cron with live progress streamed to the cron output. Under the hood — full null-safety hardening across both modules for PHP 8.1/8.2 stability.
+
+### PowerDNS provider
+
+Native support for the **PowerDNS Authoritative Server REST API** as a third DNS provider (alongside Cloudflare and HestiaCP). Works out of the box with standard PowerDNS installations — configure `server` URL and `api_key`, the module takes care of the rest. Fully integrated with forward and reverse zones, automatic `ensureTrailingDot` / FQDN normalization, and PowerDNS-strict content formatting for PTR / CNAME / NS records.
+
+### Asynchronous Set DNS records
+
+The **Set DNS records** admin button used to call the Proxmox and DNS APIs synchronously — on a service with many reverse-DNS records it would exceed the PHP execution limit and fail with a blank error page. The button now queues the job by setting the VM status to `set_dns_records` and returns `success` instantly. The cron task picks it up on the next tick, runs `DeleteDNSRecords` + `SetDNSRecords`, and writes a full step-by-step log to the VM record.
+
+### Asynchronous Terminate
+
+Same treatment for service termination. When an admin clicks Terminate, the module sends a fire-and-forget "stop" request to Proxmox, sets `vm_status = 'terminate'`, returns `'success'` — and WHMCS marks the service Terminated immediately. The actual heavy work (graceful stop with polling, backups removal, DNS deletion, VM DELETE API call, DB cleanup) is done by cron.
+
+Benefits:
+
+- Client loses access to the service instantly; no waiting 30+ seconds for the admin action to complete.
+- Large backup cleanup and bulk DNS deletion can't time out the HTTP request anymore.
+- The VM starts shutting down in the background while the cron queue is still processing other VMs — by the time cron picks it up, it's often already stopped.
+
+### Robust VM stop polling
+
+The terminate flow previously used a fixed 15-second stop window which was insufficient for VMs with large memory footprints or QEMU guest-agent filesystem freeze. It now issues a single stop request and polls the remote status every 5 seconds for up to 120 seconds (graceful), then a 60-second force-stop window. Live progress is emitted every 15 seconds so admins see what's happening.
+
+### New `error_terminate` status + Reset / Delete Record actions
+
+When termination fails (for example, the Proxmox API DELETE call returns an error), the VM no longer silently falls back to `remove`. It's now marked `error_terminate`:
+
+- Cron **never automatically retries** — the admin has to act.
+- The VM record is **not deleted** from the database and the IPs stay allocated in the pool, so they cannot be accidentally reassigned to another client while the failing VM is still present on Proxmox.
+- A clear red error banner in the VM Log modal shows the failure reason.
+
+The **Reset VM Status** modal has been expanded with `terminate` (retry) and `remove` (force-mark) options, plus an embedded reference table explaining when to use each status. A new **Delete Record** button (trash icon) appears for rows in `error_terminate` / `remove` status — it removes the row from `puqProxmoxKVM_vm_info` only, with an explicit confirmation dialog warning that Proxmox state is not touched.
+
+### Live cron output
+
+The standalone cron (`php cron.php`) now streams every individual step in real time with timestamps. During a deploy you can watch DNS records being created zone by zone, IP by IP, instead of waiting 60 seconds and seeing only the summary. During a terminate you see `stop request sent`, periodic `still running, waited Xs / 120s` heartbeats, each DNS deletion, the final `VM deleted`. Output is flushed after every line — nothing is buffered.
+
+### DNS zones UX + credentials never leave the server
+
+The DNS Zones page now shows three provider types (Cloudflare, HestiaCP, PowerDNS) with a single unified CRUD interface. Secret fields (API tokens, admin passwords, API keys) are **no longer returned to the browser** — the edit form shows `(unchanged — enter new to replace)` placeholders, and the save flow preserves the stored value if the field is left empty.
+
+### IP Pools — automatic reverse-DNS zone hint
+
+When configuring an IP Pool, the required reverse-DNS zone name for the prefix is now computed automatically and shown as a hint both in the add/edit modal and as a second line in the Addresses column of the pool list. For example, a `2001:db8::/120` pool shows:
+
+```
+2001:db8::2 - 2001:db8::50
+rDNS zone: 0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.8.b.d.0.1.0.0.2.ip6.arpa
+```
+
+Admins no longer have to compute nibble reversals by hand — copy the value straight into the DNS Zones form. Both IPv4 (`/8`, `/16`, `/24`) and IPv6 (any nibble-aligned prefix) are supported; non-aligned prefixes show a "classless delegation required" hint.
+
+### DNS record creation — reliability
+
+A collection of DNS bugs fixed in one pass:
+
+- **IPv6 PTR names** — previously computed via `str_replace(':', '')` which produced a garbage PTR for any compressed IPv6 address (e.g. `2001:db8::1` became `1.8.b.d.1.0.0.2.ip6.arpa` instead of the correct 32-nibble form). Now uses `inet_pton` + `bin2hex`, correct for every IPv6 form.
+- **PowerDNS PTR/CNAME/NS content** — automatically wrapped with a trailing dot so PowerDNS strict mode does not reject records with "Record content malformed".
+- **HestiaCP server URL** — normalized on save so it always ends with `/`, regardless of how the admin types it.
+- **Zone suffix matching** — zones saved with a trailing dot (`example.com.`) now match correctly against record names.
+- **IPv6 DNS1-only / DNS2-only** — an IP pool with only `dns1` or only `dns2` now correctly sets the VM's DNS server; previously only the `dns1+dns2` combination worked reliably.
+
+### Non-blocking DNS errors
+
+DNS API failures (zone missing, provider down, auth error) **never block** deploy, change-package, or terminate. Each zone and each record is wrapped in individual try-catch and logged as a non-blocking event. The operation proceeds with the rest. A summary (`forward_ok/err`, `rev_ok/err`, per-zone messages) is written to the VM log and, when errors occurred, to the WHMCS module log as well.
+
+### VM Management page polish
+
+- **IPs column** — each IP is now shown together with its rDNS on the line below (smaller, muted) as one visual block. Easy to scan.
+- **Actions column** — all buttons stay on a single row.
+- **Filters** — service-status and vm-status filters remember the admin's last choice in `localStorage` and restore it on the next visit. Default is now "All" on first visit (used to be "Active").
+
+### Admin UX — clearer error surfacing
+
+- VM Log modal shows a prominent red alert banner at the top when `last_error_action` / `last_error_message` are present in the last action log.
+- Client Activity Log gets exactly one entry per terminate attempt — "terminated successfully" on success, "termination FAILED — admin attention required: <reason>" on error. No spam.
+
+### Under the hood
+
+- **Full null-safety audit** across both modules: all typed-property assignments, `$params['...']`, `$_GET['...']`, and `explode()[n]` reads now use `?? default` or bounds checks. Prevents `TypeError: cannot access offset on null` warnings on PHP 8.1/8.2 when Proxmox API responses or DB rows omit optional fields.
+- Removed dead code: legacy pre-ProxmoxApi ticket parsing, unused `isOk()` helper, commented-out stubs (~40 lines total).
+- Cloudflare / HestiaCP DNS clients harden `json_decode` results against non-JSON / empty responses.
+- `cleanupFirewall` now distinguishes benign "IPSet does not exist" from real API errors (auth, 500) and logs the latter.
+- Live-cron logger is shared across deploy, change-package, and terminate flows — consistent output format everywhere.
+
+---
+
 ## v3.1 — 16-04-2026
 
 A stability and admin UX release on top of v3.0. Focused on making product configuration self-explanatory and hardening the cron against bad data.

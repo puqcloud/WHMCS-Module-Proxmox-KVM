@@ -5,7 +5,13 @@
 
 WHMCS Configurable Options allow clients to customize their virtual machine resources at order time and during upgrades. The PUQ Proxmox KVM module reads configurable option values and uses them to override the product's default settings during provisioning and change package operations.
 
-![Configurable options dropdowns](../img/admin-service-configurable-options.png)
+> **New in v3.3.** Eleven new options (every disk size / bandwidth / IOPS parameter plus Network Bandwidth) and clean plain-English names for the four previously prefix-only ones (`Backups`, `Snapshots`, `IPv4 Addresses`, `IPv6 Addresses`). Every overridable resource also has a default in Module Settings, so a product works without any Configurable Options at all.
+
+![Full list of Configurable Options assigned to a product](../img/admin-configurable-options-list-v3.3.png)
+
+The screenshot above shows all 18 supported options assigned to a single product. The next screenshot shows how a client sees them on the order form:
+
+![Client order form with Configurable Options](../img/client-order-configurable-options.png)
 
 ---
 
@@ -37,6 +43,13 @@ The module recognizes the following configurable option names. The **Option Name
 |-------------|------|-------------|----------------|
 | **CPU Cores** | Dropdown | Number of virtual CPU cores | `1`, `2`, `4`, `8`, `16` |
 | **RAM** | Dropdown | Memory size in GB | `1`, `2`, `4`, `8`, `16`, `32` |
+
+### Backups & Snapshots
+
+| Option Name | Type | Description | Example Values |
+|-------------|------|-------------|----------------|
+| **Backups** | Dropdown | Maximum number of backups for the service (0 = backups disabled) | `0`, `3`, `7`, `14`, `30` |
+| **Snapshots** | Dropdown | Maximum number of snapshots for the service (0 = snapshots disabled) | `0`, `1`, `3`, `5`, `10` |
 
 ### Storage
 
@@ -78,7 +91,9 @@ For each option:
 3. Set the **Option Type** to **Dropdown**
 4. Add sub-options with the format: `value|Display Name`
 
-### Example: CPU Cores
+### Compute resources
+
+#### Example: CPU Cores
 
 ```
 Option Name: CPU Cores
@@ -89,9 +104,10 @@ Sub-options:
 2|2 Cores
 4|4 Cores
 8|8 Cores
+16|16 Cores
 ```
 
-### Example: RAM
+#### Example: RAM
 
 ```
 Option Name: RAM
@@ -106,7 +122,39 @@ Sub-options:
 32|32 GB
 ```
 
-### Example: System Disk
+### Backups & Snapshots
+
+#### Example: Backups
+
+```
+Option Name: Backups
+Option Type: Dropdown
+
+Sub-options:
+0|No backups
+3|3 backups
+7|7 backups
+14|14 backups
+30|30 backups
+```
+
+#### Example: Snapshots
+
+```
+Option Name: Snapshots
+Option Type: Dropdown
+
+Sub-options:
+0|No snapshots
+1|1 snapshot
+3|3 snapshots
+5|5 snapshots
+10|10 snapshots
+```
+
+### Storage — size
+
+#### Example: System Disk
 
 ```
 Option Name: System Disk
@@ -120,7 +168,184 @@ Sub-options:
 160|160 GB
 ```
 
-### Example: Operating System
+#### Example: Additional Disk
+
+```
+Option Name: Additional Disk
+Option Type: Dropdown
+
+Sub-options:
+0|No additional disk
+10|10 GB
+20|20 GB
+50|50 GB
+100|100 GB
+500|500 GB
+```
+
+> **Note:** `0` means no additional disk required by the package. If a disk already exists on the VM, the module does not delete it — the existing disk is preserved.
+
+### Storage — I/O limits
+
+#### Example: System Disk Read Bandwidth
+
+```
+Option Name: System Disk Read Bandwidth
+Option Type: Dropdown
+
+Sub-options:
+0|Unlimited
+50|50 MB/s
+100|100 MB/s
+200|200 MB/s
+500|500 MB/s
+```
+
+#### Example: System Disk Write Bandwidth
+
+```
+Option Name: System Disk Write Bandwidth
+Option Type: Dropdown
+
+Sub-options:
+0|Unlimited
+50|50 MB/s
+100|100 MB/s
+200|200 MB/s
+500|500 MB/s
+```
+
+#### Example: System Disk Read IOPS
+
+```
+Option Name: System Disk Read IOPS
+Option Type: Dropdown
+
+Sub-options:
+0|Unlimited
+500|500 IOPS
+1000|1000 IOPS
+2500|2500 IOPS
+5000|5000 IOPS
+```
+
+#### Example: System Disk Write IOPS
+
+```
+Option Name: System Disk Write IOPS
+Option Type: Dropdown
+
+Sub-options:
+0|Unlimited
+500|500 IOPS
+1000|1000 IOPS
+2500|2500 IOPS
+5000|5000 IOPS
+```
+
+#### Example: Additional Disk Read Bandwidth
+
+```
+Option Name: Additional Disk Read Bandwidth
+Option Type: Dropdown
+
+Sub-options:
+0|Unlimited
+50|50 MB/s
+100|100 MB/s
+200|200 MB/s
+```
+
+#### Example: Additional Disk Write Bandwidth
+
+```
+Option Name: Additional Disk Write Bandwidth
+Option Type: Dropdown
+
+Sub-options:
+0|Unlimited
+50|50 MB/s
+100|100 MB/s
+200|200 MB/s
+```
+
+#### Example: Additional Disk Read IOPS
+
+```
+Option Name: Additional Disk Read IOPS
+Option Type: Dropdown
+
+Sub-options:
+0|Unlimited
+500|500 IOPS
+1000|1000 IOPS
+2500|2500 IOPS
+```
+
+#### Example: Additional Disk Write IOPS
+
+```
+Option Name: Additional Disk Write IOPS
+Option Type: Dropdown
+
+Sub-options:
+0|Unlimited
+500|500 IOPS
+1000|1000 IOPS
+2500|2500 IOPS
+```
+
+> **Note:** For bandwidth / IOPS options, `0` means **unlimited** — the value is omitted from the disk config string sent to Proxmox.
+
+### Network
+
+#### Example: Network Bandwidth
+
+```
+Option Name: Network Bandwidth
+Option Type: Dropdown
+
+Sub-options:
+0|Unlimited
+10|10 MB/s
+50|50 MB/s
+100|100 MB/s
+500|500 MB/s
+1000|1 GB/s
+```
+
+#### Example: IPv4 Addresses
+
+```
+Option Name: IPv4 Addresses
+Option Type: Dropdown
+
+Sub-options:
+1|1 IPv4
+2|2 IPv4
+4|4 IPv4
+8|8 IPv4
+16|16 IPv4
+```
+
+#### Example: IPv6 Addresses
+
+```
+Option Name: IPv6 Addresses
+Option Type: Dropdown
+
+Sub-options:
+0|No IPv6
+1|1 IPv6
+4|4 IPv6
+16|16 IPv6
+```
+
+> **Note:** Setting either count to `0` means «no addresses of that family will be allocated from the IP pool for this service». Upgrades that lower the count automatically release the excess addresses back to the pool.
+
+### Operating System
+
+#### Example: Operating System
 
 ```
 Option Name: Operating System
@@ -153,14 +378,70 @@ The change package process is logged step-by-step in the [Deploy Log](02-service
 
 ---
 
+## Disk size constraints
+
+**System Disk and Additional Disk size can only be increased.** Proxmox does not support shrinking VM disks (it would risk corrupting/losing data), so any configurable option that would result in a smaller disk than the current size is rejected by the module.
+
+![Client upgrade page with shrink protection — smaller disk options are disabled with a clear warning banner](../img/client-upgrade-configurable-options.png)
+
+### How it is enforced
+
+The module applies the constraint at three layers:
+
+1. **Client-area upgrade page** — on `/clientarea.php?action=upgrade&type=configoptions`, sub-options whose value is smaller than the currently selected one are visually disabled in the System Disk / Additional Disk dropdowns and marked `(downgrade not allowed)`. A warning banner is shown above the form.
+2. **Change-package state machine** — if a smaller value still reaches the backend (e.g. via direct admin edit), the `Resize system disk` / `Resize additional disk` step is skipped with status `skip — shrink not allowed by Proxmox`. The VM is **not** stopped, snapshots are **not** removed, and the step is logged via `logModuleCall` under the action name `system_disk_shrink_rejected` / `additional_disk_shrink_rejected`.
+3. **Post-backup-restore re-apply** — when the module re-applies package configuration after a backup restore, a smaller package disk size is treated the same way: the resize is silently skipped, the existing larger disk is kept, and the rejection is logged.
+
+### Resulting behaviour for clients
+
+- A client picking a smaller System Disk / Additional Disk in an upgrade order cannot submit it — the option is disabled in the UI.
+- If by some path a smaller value reaches the change-package operation, the **disk size stays unchanged**. All other configurable options in the same change-package operation (CPU, RAM, bandwidth, IOPS, IPv4/IPv6 count, etc.) are still applied normally.
+
+### Additional Disk special cases
+
+- `Additional Disk = 0` with no existing disk → no action.
+- `Additional Disk = 0` with **existing disk** → the existing disk is **detached and deleted**. VM is stopped first, all snapshots are removed (Proxmox requires this for detach), the disk interface is removed from the VM config, and the disk file is purged from storage. **All data on the additional disk is lost.** Logged via `logModuleCall` under `additional_disk_deleted`.
+- `Additional Disk` increased from `0` to `N` → new disk is created with size `N` GB.
+- `Additional Disk` increased from `N` to `M > N` → disk is resized in place (no data loss).
+- `Additional Disk` decreased while > 0 (e.g. from `50` to `20`) → treated as shrink, rejected, current size kept.
+
+> **Note for clients:** The upgrade form shows a confirmation dialog before submitting an Additional Disk = `0` change. The sub-option is also labeled `(removes the existing disk — data will be lost)` in the dropdown to make the destructive effect visible.
+
+> **Note for admins:** If you do not want clients to be able to delete the additional disk via the configurable option, omit the `0|...` sub-option from the Additional Disk dropdown — make the lowest entry the minimum disk size you offer (e.g. `10|10 GB`).
+
+---
+
 ## Priority Order
 
 When determining the final value for a VM resource, the module follows this priority:
 
-1. **Configurable Option value** (highest priority, if set and non-zero)
-2. **Product Module Settings default** (used when no configurable option overrides it)
+1. **Configurable Option value** (highest priority — applied whenever the option is assigned to the service, including a value of `0`)
+2. **Product Module Settings default** (used only when no configurable option for that resource is assigned to the service)
 
-This means you can set conservative defaults in the product configuration and allow clients to customize resources upward through configurable options.
+Every overridable resource has a default in **Module Settings** for the product. If you do not create a Configurable Option for a resource, that default is used for every service of the product. The defaults live in:
+
+| Resource | Module Settings location | Default value (if you don't set it) |
+|---|---|---|
+| CPU Cores | VM Configuration → CPU | `1` |
+| RAM | VM Configuration → RAM | `1` GB |
+| Backups | VM Configuration → Backups | `0` (disabled) |
+| Snapshots | VM Configuration → Snapshots | `0` (disabled) |
+| System Disk size + bandwidth + IOPS | Storage → System Disk | `0` (no change) |
+| Additional Disk size + bandwidth + IOPS | Storage → Additional Disk | `0` (no additional disk) |
+| Network Bandwidth | Network → Bandwidth | `0` (unlimited) |
+| IPv4 count | Network → IPv4 count | `1` |
+| IPv6 count | Network → IPv6 count | `0` |
+| Operating System | VM Configuration → OS template | `configoption4` (default OS template) |
+
+`0` is a meaningful value for many options and is **always** applied when a client selects it through a Configurable Option:
+- `Additional Disk` = `0` → existing disk is **detached and deleted** (data lost)
+- `Network Bandwidth` = `0` → unlimited
+- `*Bandwidth` / `*IOPS` = `0` → unlimited
+- `IPv4 Addresses` / `IPv6 Addresses` = `0` → no address of that family (existing addresses are released back to the pool)
+- `Backups` / legacy `B|Backup` = `0` → backups disabled for the service
+- `Snapshots` / legacy `S|Snapshot` = `0` → snapshots disabled for the service
+
+This means you can set conservative defaults in the product configuration and allow clients to customize resources both upward (more CPU/RAM/disk) and downward (disable additional disk, set unlimited bandwidth) through configurable options.
 
 ---
 
@@ -207,6 +488,74 @@ Sub-options:
 3|3 backups
 7|7 backups
 14|14 backups
+```
+
+### Legacy example: Snapshot
+
+```
+Option Name: S|Snapshot
+Option Type: Dropdown
+
+Sub-options:
+0|No snapshots
+1|1 snapshot
+3|3 snapshots
+5|5 snapshots
+10|10 snapshots
+```
+
+### Legacy example: CPU
+
+```
+Option Name: CPU|Processor
+Option Type: Dropdown
+
+Sub-options:
+1|1 Core
+2|2 Cores
+4|4 Cores
+8|8 Cores
+16|16 Cores
+```
+
+### Legacy example: RAM
+
+```
+Option Name: RAM|Memory
+Option Type: Dropdown
+
+Sub-options:
+1|1 GB
+2|2 GB
+4|4 GB
+8|8 GB
+16|16 GB
+```
+
+### Legacy example: IPv4
+
+```
+Option Name: ipv4|IPv4
+Option Type: Dropdown
+
+Sub-options:
+1|1 IPv4
+2|2 IPv4
+4|4 IPv4
+8|8 IPv4
+```
+
+### Legacy example: IPv6
+
+```
+Option Name: ipv6|IPv6
+Option Type: Dropdown
+
+Sub-options:
+0|No IPv6
+1|1 IPv6
+4|4 IPv6
+16|16 IPv6
 ```
 
 ### Which format should I use?

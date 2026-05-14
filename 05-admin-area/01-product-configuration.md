@@ -23,7 +23,7 @@ The first field in the standard WHMCS module settings area is the **License key*
 
 This section controls the core virtual machine parameters applied during provisioning.
 
-![VM Configuration section](../img/admin-product-config-vm-section.png)
+![VM Configuration section](../img/admin-product-config-vm-section-v3.3.png)
 
 | Setting | Description | Default |
 |---------|-------------|---------|
@@ -32,6 +32,8 @@ This section controls the core virtual machine parameters applied during provisi
 | **Clone type** | Determines how the VM is cloned from the template. **Linked Clone** is faster and uses less disk space by sharing the base disk with the template. **Full Clone** creates a completely independent copy but is slower and uses more storage. | `Linked Clone` |
 | **CPU** | Number of virtual CPU cores assigned to the VM. | `1` |
 | **RAM** | Amount of memory in gigabytes assigned to the VM. | `1` |
+| **Backups** *(new in v3.3)* | Default maximum number of backups for the service. Overridden by the `Backups` Configurable Option when assigned. `0` = backups disabled. | `0` |
+| **Snapshots** *(new in v3.3)* | Default maximum number of snapshots for the service. Overridden by the `Snapshots` Configurable Option when assigned. `0` = snapshots disabled. | `0` |
 | **VM name rule** | A naming pattern for the VM hostname. Supports macros that are expanded at provisioning time. Leave empty to use the default pattern. A live preview is shown below the field. | `{client_id}-{service_id}` |
 | **First VM ID** | The starting VM ID number. The module assigns VM IDs sequentially from this value, skipping any IDs already in use on the Proxmox cluster. | `100` |
 | **OS username** | The default operating system username set via cloud-init. Leave empty to generate a random username. | (empty = random) |
@@ -82,9 +84,11 @@ This section configures the virtual network adapter and IP addressing behavior f
 | Setting | Description | Default |
 |---------|-------------|---------|
 | **Model** | The virtual network adapter model. **As in template** preserves the model defined in the Proxmox template. Other options: **VirtIO** (recommended for Linux), **Intel E1000**, **Realtek RTL8139**, **VMware vmxnet3**. | `As in template` |
-| **Bandwidth** | Maximum network bandwidth limit in MB/s. Set to **0** for unlimited bandwidth. | `0` (unlimited) |
+| **Bandwidth** | Maximum network bandwidth limit in MB/s. Set to **0** for unlimited bandwidth. Overridden by the `Network Bandwidth` Configurable Option when assigned. | `0` (unlimited) |
 | **Bridge** | The Proxmox network bridge to attach the VM's network adapter to (e.g., `vmbr0`, `vmbr1`). | `vmbr0` |
 | **VLAN tag** | VLAN tag for the network adapter. Set to **0** for no VLAN tagging. Valid range: 0-4096. | `0` |
+| **IPv4 count** *(new in v3.3)* | Default number of IPv4 addresses to allocate from the pool. Overridden by the `IPv4 Addresses` Configurable Option when assigned. | `1` |
+| **IPv6 count** *(new in v3.3)* | Default number of IPv6 addresses to allocate from the pool. Overridden by the `IPv6 Addresses` Configurable Option when assigned. `0` = no IPv6. | `0` |
 | **Auto bridge/VLAN** | When enabled, the bridge and VLAN are automatically determined from the IP Pool configuration in the addon module, overriding the manual Bridge and VLAN settings above. | `on` |
 | **DHCP IPv4** | Enable DHCP for IPv4 addressing in cloud-init configuration. | `on` |
 | **DHCP IPv6** | Enable DHCP for IPv6 addressing in cloud-init configuration. | `on` |

@@ -5,6 +5,38 @@
 
 ---
 
+## v3.3 — 14-05-2026
+
+Configurable Options release: full coverage with plain-English names, Module Settings defaults for every resource, disk shrink protection.
+
+### Configurable Options
+
+- **18 supported options** with plain-English names: `CPU Cores`, `RAM`, `System Disk`, `Additional Disk`, `System Disk Read/Write Bandwidth`, `System Disk Read/Write IOPS`, `Additional Disk Read/Write Bandwidth`, `Additional Disk Read/Write IOPS`, `Network Bandwidth`, `IPv4 Addresses`, `IPv6 Addresses`, `Backups`, `Snapshots`, `Operating System`.
+- **11 are new in v3.3** — all disk size / bandwidth / IOPS parameters and Network Bandwidth.
+- Legacy prefix names (`B|...`, `S|...`, `CPU|...`, `RAM|...`, `ipv4|...`, `ipv6|...`, `OS|...`) still work. When both forms exist on the same product, the plain name wins.
+
+### Module Settings defaults
+
+A product now works without any Configurable Options at all — every resource has a default in Module Settings, overridden only when a matching option is assigned to the service. New default fields: `Backups` and `Snapshots` count in VM Configuration; `IPv4 count` and `IPv6 count` in Network.
+
+### Disk shrink protection
+
+Proxmox cannot shrink disks. v3.3 blocks downgrades at three layers:
+
+1. **Upgrade page** — smaller sub-options are visually disabled with `(downgrade not allowed)`, warning banner above the form, client-side submit guard.
+2. **Change-package state machine** — backend skips the resize step with `skip — shrink not allowed by Proxmox`, VM is not stopped, snapshots are not removed.
+3. **Post-backup-restore** — re-applying a smaller package size after restore is treated the same way.
+
+### Additional Disk = 0 deletes the disk
+
+Selecting `0` for Additional Disk now detaches the disk and purges the file from storage. Upgrade form labels the sub-option `(removes the existing disk — data will be lost)` and requires a JavaScript `confirm()` before submit. To disallow this for clients, omit the `0|...` sub-option from the Additional Disk dropdown.
+
+### Faster change-package
+
+The Start VM step at the end of a change-package now polls for up to 60 seconds in the same cron pass. Slower-starting VMs (cloud-init, large memory) no longer force a one-minute wait for the next cron tick.
+
+---
+
 ## v3.2 — 18-04-2026
 
 A DNS, lifecycle and admin-UX release. Key goal: long-running operations (provisioning many DNS records, tearing down a service with large backups) must never time out the WHMCS request. Both **Set DNS records** and **Terminate** now run asynchronously in cron with live progress streamed to the cron output. Under the hood — full null-safety hardening across both modules for PHP 8.1/8.2 stability.

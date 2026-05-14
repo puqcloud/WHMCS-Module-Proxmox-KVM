@@ -157,6 +157,18 @@ Same fields as the system disk section, displayed for the secondary disk.
 
 ---
 
+## Configurable Options *(new in v3.3)*
+
+A dedicated **Configurable Options** tab on the service page shows the effective per-service selection of every WHMCS Configurable Option that is assigned to the product. Useful for confirming which pricing tier the client actually picked without having to dig into the database or the order itself.
+
+![Service Configurable Options tab](../img/admin-service-configurable-options-v3.3.png)
+
+The tab lists each option by its plain-English name (`CPU Cores`, `RAM`, `System Disk`, `Backups`, `Snapshots`, etc.) together with the human-readable display text of the selected sub-option. When no Configurable Option is assigned for a given resource, the Module Settings default is used and that resource simply does not appear in this tab — see the [Product Configuration chapter](01-product-configuration.md) for where each default lives.
+
+See the dedicated [Configurable Options chapter](03-configurable-options.md) for the full list of supported options, sub-option formats, and pricing-tier examples.
+
+---
+
 ## Deploy Log
 
 The deploy log panel is toggled by clicking the **Deploy Log** button. It provides a complete history of all provisioning and administrative operations performed on the VM.

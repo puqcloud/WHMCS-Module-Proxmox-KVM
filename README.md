@@ -13,6 +13,8 @@ The module is intended for advanced users — installation and correct configura
 
 > **Changed in v3.0.** Starting from v3.0 the module ships its own dedicated addon module (`puq_proxmox_kvm`) — the separate **PUQ Customization** addon required for v1.3–v2.x is **no longer needed**. On first activation the new addon automatically migrates IP pools, DNS zones and VM records from the old `puq_customization` tables.
 
+> **New in v3.3.** Full WHMCS Configurable Options coverage — 18 distinct options with clean plain-English names cover every per-service customisation (CPU, RAM, every disk size / bandwidth / IOPS, network bandwidth, IP counts, OS, backups, snapshots). Every option has a sensible default in Module Settings so products work out of the box. Disk downgrades are blocked by a three-layer safety net; selecting `Additional Disk = 0` cleanly removes the extra disk. See the [Changelog](02-changelog.md) and the [Configurable Options chapter](05-admin-area/03-configurable-options.md) for details.
+
 ### Installation service
 
 If you don't feel comfortable performing the installation yourself, PUQcloud offers an installation service in two variants — **module installation and configuration** and **full implementation**. See [puqcloud.com](https://puqcloud.com/whmcs-module-proxmox-kvm.php) for details.

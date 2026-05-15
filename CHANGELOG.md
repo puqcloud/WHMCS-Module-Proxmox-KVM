@@ -5,6 +5,33 @@
 
 ---
 
+## v3.3.1 — 15-05-2026
+
+Compatibility patch for **Proxmox VE 9.1.1** and templates that don't use VirtIO.
+
+### Proxmox 9.x strict schema — fixed
+
+Proxmox VE 9.x hardened its API schema validation. The «Set system disk I/O» step started failing with `HTTP 400: {"_root":"property is not defined in schema"}` whenever the module couldn't pin down the system disk from the VM config. Now bulletproof — see below.
+
+### Robust system-disk detection
+
+Any combination of the following templates is now handled correctly:
+
+- **SCSI / SATA / IDE system disks**.
+- **Legacy `bootdisk: scsi0`** parameter from older Proxmox versions.
+- **Boot order with CD-ROM first** (`boot: order=ide2;scsi0`) — cloudinit / CD-ROM / network entries are skipped, the first real data disk wins.
+- **Templates without a `boot:` line at all** — the first detected data disk is used as a fallback.
+
+### Additional disk creation — works on any storage
+
+Format detection for the new additional disk used to fail when the system disk volid contained extra dots (storage names with `.`, path-style volids on certain plugins). The parser now extracts only the trailing extension and validates against the Proxmox enum (`raw`, `qcow2`, `vmdk`, …), falling back to `raw` for block storage and volids without an extension. No more `format error: value 'qcow2/101/vm-101-disk-0' does not have a value in the enumeration` on creation.
+
+### Bandwidth step — no more useless API calls
+
+`Set system / additional disk I/O` now skips the API call entirely when all four bandwidth/IOPS values are `0`. Faster deploys, clean cron logs, and one less surface for schema-strict Proxmox versions to fail on.
+
+---
+
 ## v3.3 — 14-05-2026
 
 Configurable Options release: full coverage with plain-English names, Module Settings defaults for every resource, disk shrink protection.

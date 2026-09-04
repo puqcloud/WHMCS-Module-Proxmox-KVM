@@ -1,7 +1,7 @@
 # Reset Password
 
 ### Proxmox KVM module **[WHMCS](https://puqcloud.com/link.php?id=77)**
-#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [FAQ](https://faq.puqcloud.com/)
+#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [Community](https://community.puqcloud.com/)
 
 The Reset Password page allows clients to generate a new root/admin password for their virtual machine. The new password is applied via cloud-init and sent to the client by email.
 
@@ -15,6 +15,7 @@ The Reset Password page allows clients to generate a new root/admin password for
 6. The new password is sent to the client via the configured email template.
 
 ![Reset password page](../img/client-area-reset-password.png)
+*client-area-reset-password.png*
 
 ## Cloud-Init Requirement
 

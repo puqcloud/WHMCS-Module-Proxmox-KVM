@@ -1,7 +1,7 @@
 # Charts
 
 ### Proxmox KVM module **[WHMCS](https://puqcloud.com/link.php?id=77)**
-#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [FAQ](https://faq.puqcloud.com/)
+#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [Community](https://community.puqcloud.com/)
 
 The Charts page provides visual performance graphs showing resource utilization of the virtual machine over time. Data is sourced from Proxmox VE RRD (Round Robin Database) statistics and rendered using the Google Charts library.
 
@@ -29,6 +29,7 @@ Charts can be viewed across different time ranges using the tab buttons at the t
 Clicking a tab reloads all four charts with data for the selected time period.
 
 ![Charts usage](../img/client-area-charts-usage.png)
+*client-area-charts-usage.png*
 
 ## Notes
 

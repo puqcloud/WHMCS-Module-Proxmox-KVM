@@ -1,7 +1,7 @@
 # Terminate Process
 
 ### Proxmox KVM module **[WHMCS](https://puqcloud.com/link.php?id=77)**
-#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [FAQ](https://faq.puqcloud.com/)
+#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [Community](https://community.puqcloud.com/)
 
 ## Overview
 
@@ -39,6 +39,7 @@ terminate → [stop VM] → [remove backups] → [delete DNS] → [DELETE VM] �
 Every phase is streamed to the cron output with timestamps and progress heartbeats. A completed terminate looks like this:
 
 ![Cron live output of a terminate run](../img/cron-terminate-live-output.png)
+*cron-terminate-live-output.png*
 
 Lines you will see:
 
@@ -77,10 +78,12 @@ It is deliberate. If the VM still exists on Proxmox but the WHMCS record has bee
 Open **Addons → PUQ Proxmox KVM → VM Management**. Rows in `error_terminate` show a red status badge and a trash icon in the Actions column:
 
 ![VM Management with a terminate in progress](../img/vm-management-terminate-in-progress.png)
+*vm-management-terminate-in-progress.png*
 
 After the cron finishes:
 
 ![VM Management showing a terminated service](../img/vm-management-terminated-list.png)
+*vm-management-terminated-list.png*
 
 ### Reset VM Status modal
 

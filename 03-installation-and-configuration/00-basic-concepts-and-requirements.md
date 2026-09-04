@@ -1,16 +1,16 @@
 # Basic concepts and requirements
 
 ### Proxmox KVM module **[WHMCS](https://puqcloud.com/link.php?id=77)**
-#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [FAQ](https://faq.puqcloud.com/)
+#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [Community](https://community.puqcloud.com/)
 
-## System Requirements
+## System requirements
 
 | Requirement | Supported Versions |
-|-------------|---------------|
-| WHMCS | 8.x, 9.x |
-| PHP | 7.4, 8.1, 8.2 |
-| Proxmox VE | 7.x, 8.x |
-| ionCube Loader | v13 or newer |
+|-------------|--------------------|
+| **WHMCS** | 8.x+, 9.x+. |
+| **PHP** | 7.4, 8.1, 8.2, 8.3, 8.4 |
+| **Proxmox VE** | 7.x+, 8.x+ |
+| **ionCube Loader** | v15+ |
 
 ## Required PHP Extensions
 
@@ -115,6 +115,7 @@ Deploy steps (v3.0):
 Example of a successful cron run (v3.0 output format):
 
 ![Deploy success — cron output](../img/cron-deploy-log-success.png)
+*cron-deploy-log-success.png*
 
 ```
 2026-04-10 03:49:18 PUQ Proxmox KVM Cron Start
@@ -161,6 +162,7 @@ Every `change_package` step also:
 Example of a successful change-package cron run:
 
 ![Change package success — cron output](../img/cron-change-package-log-success.png)
+*cron-change-package-log-success.png*
 
 ```
 2026-04-10 03:54:38 PUQ Proxmox KVM Cron Start
@@ -179,6 +181,7 @@ This second run only does two steps because the **previous** cron tick had alrea
 Example of a change-package that partially failed and is scheduled for retry:
 
 ![Change package retry — cron output](../img/cron-change-package-log-retry.png)
+*cron-change-package-log-retry.png*
 
 ```
 2026-04-10 03:53:23 PUQ Proxmox KVM Cron Start
@@ -221,10 +224,11 @@ The reinstallation procedure removes the VM and recreates it using the current p
 
 ### Snapshots
 
-- The client can create, delete and restore snapshots of their VM from the client area.
-- The number of snapshots is limited in the package configuration.
-- Snapshot lifetime is configured per-product (1–10 days maximum).
-- A cron task automatically deletes snapshots older than the configured lifetime.
+- The client can create, delete, and rollback snapshots of their VM directly from the client area.
+- The maximum number of snapshots allowed is defined in the product settings or via the `Snapshots` Configurable Option.
+- The module supports two operational modes:
+  - **Scheduled Automatic Snapshots Mode (Recommended)**: The client configures a weekly schedule. The cron job automatically takes snapshots (`Scheduler: YYYY-MM-DD`) and rotates the oldest snapshot when the quota is reached.
+  - **Lifetime Expiration Mode**: The client creates snapshots manually. Snapshots are assigned a configurable retention lifetime (1–10 days or indefinite), and expired snapshots are automatically purged by cron.
 
 ### Backups
 

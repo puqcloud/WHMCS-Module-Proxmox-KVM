@@ -1,148 +1,233 @@
 # Install VNCproxy and noVNC
 
 ### Proxmox KVM module **[WHMCS](https://puqcloud.com/link.php?id=77)**
-#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [FAQ](https://faq.puqcloud.com/)
+##### [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [Community](https://community.puqcloud.com/)
 
 ## Preface
 
-The module supports the ability to connect to and use a browser-based console to manage a specific KVM virtual machine. To connect to the VM console we use third-party software.
+The module provides browser-based console access allowing clients to manage KVM virtual machines directly from the WHMCS client area without needing external VNC software. To establish console sessions, the module integrates with:
 
-**noVNC** — the open-source VNC client. noVNC is both a VNC client JavaScript library and an application built on top of that library. It runs well in any modern browser, including mobile browsers (iOS and Android).
+- **noVNC** — An open-source HTML5 VNC client JavaScript library and application that runs in any modern desktop or mobile browser (iOS, Android).
+  - Project website: [https://novnc.com](https://novnc.com)
+  - GitHub repository: [https://github.com/novnc/noVNC](https://github.com/novnc/noVNC)
+- **vncwebproxy** — A lightweight Go daemon developed by PUQ that terminates the client's secure WebSocket connection and relays traffic to the Proxmox VNC port:
+  - [go-vncproxy](https://github.com/evangwt/go-vncproxy) (MIT License)
+  - [gin](https://github.com/gin-gonic/gin) (MIT License)
+  - [golang.org/x/net/websocket](https://pkg.go.dev/golang.org/x/net/websocket) (BSD License)
 
-- Project site: [https://novnc.com](https://novnc.com)
-- Project GitHub: [https://github.com/novnc/noVNC](https://github.com/novnc/noVNC)
+### How It Works
 
-> As we only use an external project, we do not take any responsibility for data leaks, hacks, etc.
+The `vncwebproxy` sits between the client's web browser and your Proxmox VE cluster:
 
-The PUQ `vncwebproxy` binary itself is written in Go and uses the following libraries:
+1. When a client clicks **Console** in WHMCS, the module requests a one-time VNC ticket and port from the Proxmox API.
+2. WHMCS generates a signed, one-time console link incorporating the ticket and redirects the client's browser to the `vncwebproxy` domain.
+3. The client browser loads noVNC via HTTPS and opens a secure WebSocket connection to `/vncproxy/...`.
+4. `vncwebproxy` validates the authentication ticket and forwards the bidirectional VNC stream to the designated Proxmox node on TCP ports **5900–5999**.
 
-- [go-vncproxy](https://github.com/evangwt/go-vncproxy) (MIT License)
-- [gin](https://github.com/gin-gonic/gin) (MIT License)
-- [golang.org/x/net/websocket](https://pkg.go.dev/golang.org/x/net/websocket) (BSD License)
+```text
+[ Client Browser (noVNC) ] 
+       │  HTTPS / WSS (Ports 80 / 443)
+       ▼
+[ vncwebproxy ] 
+       │  VNC TCP (Ports 5900–5999)
+       ▼
+[ Proxmox VE Node ]
+```
 
-### How it works
+---
 
-The `vncwebproxy` sits between the client browser and your Proxmox server. It terminates the WebSocket from noVNC and forwards traffic to the Proxmox VNC port.
+## Public PUQcloud Proxy (Testing / Evaluation)
 
-- The proxy must have stable network connectivity to the Proxmox server; TCP ports **5900–5999** to Proxmox are sufficient.
-- If you use a **domain name** (not an IP) for the Proxmox server in the WHMCS server settings, that domain must resolve correctly **from the vncproxy host as well**.
-- Each console session uses a one-time authentication ticket generated on demand and validated by the Proxmox API before the connection is established.
-- All traffic between the client browser and the proxy is encrypted with SSL/TLS.
-
-## Public PUQcloud proxy (default)
-
-If you have any difficulties setting up your own proxy, you can use the public PUQcloud vncproxy server. **However, we strongly recommend setting up and using your own vncproxy server** — this way you retain full control over performance and security.
+For rapid testing or evaluation, you can use the public PUQcloud demo proxy. **For production deployments, we strongly recommend hosting your own proxy** to ensure optimal performance, low latency, and full control over security.
 
 | Setting | Value |
 |---------|-------|
 | noVNC WEB proxy server | `vncproxy.puqcloud.com` |
 | noVNC WEB proxy key | `puqcloud` |
-| WEB ports | `80` / `443` |
-| VNC ports | `5900–5999` |
+| Web ports | `80` / `443` (SSL/TLS) |
+| Proxmox target ports | `5900–5999` |
 
-These values go into the WHMCS product settings under **Module Settings → Integrations Configuration**:
+These settings are entered in the WHMCS product settings under **Module Settings → Integrations Configuration**:
 
-| Setting | Description |
-|---------|-------------|
-| **noVNC Proxy Domain** | The URL of your noVNC proxy (e.g. `https://vncproxy.puqcloud.com`) |
-| **noVNC Proxy Key** | Authentication key configured on the proxy (e.g. `puqcloud`) |
+| Setting | Description | Example |
+|---------|-------------|---------|
+| **noVNC Proxy Domain** | The HTTPS URL of your proxy server | `https://vncproxy.yourdomain.com` |
+| **noVNC Proxy Key** | The secret authentication key configured on the proxy | `your-secret-key` |
 
-## Installation process — your own VNCproxy server
+---
 
-The sections below describe the full installation of a dedicated vncproxy server. The example uses **Debian 11** and the domain `vncproxy.puqcloud.com` — in your own deployment, substitute your domain everywhere.
+## Method 1: Docker Deployment (Recommended)
 
-### Step 1: Domain definition
+PUQ provides an official, all-in-one Docker image on Docker Hub:
+**[puqcloud/vncwebproxy](https://hub.docker.com/r/puqcloud/vncwebproxy)**
 
-First, choose a domain name for the vncproxy server (in our example: `vncproxy.puqcloud.com`). Create an `A`/`AAAA` record in your DNS pointing to the server's public IP address. Wait until the record propagates before requesting the SSL certificate.
+This image bundles:
+- The compiled `vncwebproxy` Go daemon
+- **noVNC v1.7.0** served statically via an internal high-performance NGINX web server
+- Built-in dual health checks (NGINX on port 80 and WebSocket listener on port 8080)
+- Unified logging and minimal resource footprint
 
-### Step 2: Prepare the server
+### Prerequisites
+- Docker Engine 20.10+ and Docker Compose v2+ installed on your proxy server.
+- The proxy server must have outbound network access to your Proxmox VE nodes on TCP ports **5900–5999**.
+- A public domain name (e.g., `vncproxy.yourdomain.com`) with an `A`/`AAAA` DNS record pointing to your proxy server.
 
-Provision a VM or dedicated host with your favorite Linux distribution — the example uses **Debian 11**. Make sure the server can reach your Proxmox nodes on TCP ports `5900–5999`, and that inbound ports `80/443` are open for clients.
+### Deploying with Docker Compose
 
-Update the package database:
+Create a directory and a `docker-compose.yml` file:
+
+```bash
+mkdir -p /opt/vncwebproxy && cd /opt/vncwebproxy
+nano docker-compose.yml
+```
+
+Add the following configuration:
+
+```yaml
+version: "3.8"
+
+services:
+  vncwebproxy:
+    image: puqcloud/vncwebproxy:latest
+    container_name: vncwebproxy
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      - TZ=UTC
+      # Set your unique Proxy Key (must match noVNC Proxy Key in WHMCS)
+      - PROXY_KEY=my_secure_proxy_key_123
+```
+
+Start the container:
+
+```bash
+docker compose up -d
+```
+
+### Deploying with Docker CLI
+
+Alternatively, run the container directly with `docker run`:
+
+```bash
+docker run -d \
+  --name vncwebproxy \
+  --restart unless-stopped \
+  -p 8080:80 \
+  -e PROXY_KEY=my_secure_proxy_key_123 \
+  -e TZ=UTC \
+  puqcloud/vncwebproxy:latest
+```
+
+### Environment Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `PROXY_KEY` | The secret authentication key passed from WHMCS | `puqcloud` |
+| `TZ` | Container timezone (e.g. `UTC`, `Europe/Warsaw`, `America/New_York`) | `UTC` |
+
+### Reverse Proxy & SSL Configuration
+
+Because modern browsers require HTTPS and WSS (secure WebSockets) for console access, place a reverse proxy with SSL termination in front of the container.
+
+#### Example: NGINX Reverse Proxy
+
+```nginx
+server {
+    listen 80;
+    server_name vncproxy.yourdomain.com;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name vncproxy.yourdomain.com;
+
+    ssl_certificate /etc/letsencrypt/live/vncproxy.yourdomain.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/vncproxy.yourdomain.com/privkey.pem;
+
+    location / {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+> **Using Nginx Proxy Manager?** In the NPM UI, create a Proxy Host pointing to `http://vncwebproxy:80` (or `http://127.0.0.1:8080`), enable **Websockets Support**, select **Request a new SSL Certificate**, and check **Force SSL**.
+
+### Health Checks
+
+The Docker image includes an automated dual health check:
+1. Verifies that NGINX is actively serving the noVNC client interface on port 80.
+2. Verifies that the internal Go proxy daemon is listening for WebSocket connections on port 8080.
+
+Check container health:
+
+```bash
+docker inspect --format='{{.State.Health.Status}}' vncwebproxy
+```
+
+### Updating the Image
+
+To update to the latest release:
+
+```bash
+docker compose pull
+docker compose up -d
+```
+
+---
+
+## Method 2: Manual Standalone Installation (Bare Metal)
+
+If you prefer installing directly on the host without Docker:
+
+### Step 1: Prepare Server & Packages (Debian / Ubuntu)
 
 ```bash
 sudo apt update
-```
-
-Install the NGINX web server, Certbot and `zip`:
-
-```bash
 sudo apt install certbot nginx python3-certbot-nginx zip -y
 ```
 
-### Step 3: Download the noVNC client
+### Step 2: Download noVNC
 
 ```bash
 cd /root/
 wget https://github.com/novnc/noVNC/archive/refs/tags/v1.3.0.zip
 unzip v1.3.0.zip
 cp -R noVNC-1.3.0/* /var/www/html/
-rm v1.3.0.zip
-rm -r noVNC-1.3.0/
+rm -rf v1.3.0.zip noVNC-1.3.0/
 ```
 
-After this step, opening `http://vncproxy.puqcloud.com/vnc.html` will load the noVNC client page.
-
-### Step 4: Generate an SSL certificate with Certbot
+### Step 3: SSL Certificate via Certbot
 
 ```bash
-certbot --nginx -d vncproxy.puqcloud.com
+certbot --nginx -d vncproxy.yourdomain.com
 ```
 
-To renew the certificate automatically, add a cron job:
+### Step 4: NGINX Virtual Host
 
-```bash
-crontab -e
-```
-
-```
-0 12 * * * /usr/bin/certbot renew --quiet
-```
-
-### Step 5: NGINX virtual host configuration
-
-Edit the default site configuration:
-
-```bash
-nano /etc/nginx/sites-available/default
-```
-
-Use the following config — remember to replace `vncproxy.puqcloud.com` with your own domain:
+Edit `/etc/nginx/sites-available/default`:
 
 ```nginx
 server {
-    listen 80 default_server;
-    listen [::]:80 default_server;
-
     root /var/www/html;
+    index index.html index.htm;
+    server_name vncproxy.yourdomain.com;
 
-    index index.html index.htm index.nginx-debian.html;
-
-    server_name _;
+    listen 443 ssl http2;
+    ssl_certificate /etc/letsencrypt/live/vncproxy.yourdomain.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/vncproxy.yourdomain.com/privkey.pem;
 
     location / {
         try_files $uri $uri/ =404;
     }
-}
-
-server {
-
-    root /var/www/html;
-
-    index index.html index.htm index.nginx-debian.html;
-    server_name vncproxy.puqcloud.com; # managed by Certbot
-
-    location / {
-        try_files $uri $uri/ =404;
-    }
-
-    listen [::]:443 ssl ipv6only=on; # managed by Certbot
-    listen 443 ssl; # managed by Certbot
-    ssl_certificate /etc/letsencrypt/live/vncproxy.puqcloud.com/fullchain.pem; # managed by Certbot
-    ssl_certificate_key /etc/letsencrypt/live/vncproxy.puqcloud.com/privkey.pem; # managed by Certbot
-    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
-    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
 
     location /vncproxy {
         proxy_pass http://127.0.0.1:8080/vncproxy;
@@ -150,85 +235,60 @@ server {
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "Upgrade";
         proxy_set_header Host $host;
-        proxy_set_header    X-Real-IP        $remote_addr;
-        proxy_set_header    X-Forwarded-For  $proxy_add_x_forwarded_for;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     }
-}
-
-server {
-    if ($host = vncproxy.puqcloud.com) {
-        return 301 https://$host$request_uri;
-    } # managed by Certbot
-
-    listen 80 ;
-    listen [::]:80 ;
-    server_name vncproxy.puqcloud.com;
-    return 404; # managed by Certbot
 }
 ```
 
 Reload NGINX:
 
 ```bash
-service nginx restart
+systemctl restart nginx
 ```
 
-### Step 6: Install the `vncwebproxy` binary
-
-Download the PUQ `vncwebproxy` binary from the official download server and make it executable:
+### Step 5: Download & Run `vncwebproxy`
 
 ```bash
-apt-get install screen -y
-cd /root/
+apt install screen -y
+cd /opt
 wget https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/vncproxy/vncwebproxy
 chmod +x vncwebproxy
+
+screen -S vncproxy
+./vncwebproxy my_secure_proxy_key_123
 ```
 
-### Step 7: Run the proxy
+Detach from `screen` with `Ctrl+A` then `D`.
 
-Run the script inside a `screen` session so it keeps running in the background. The **first argument** is a unique key — this is exactly the value you will later put into the **noVNC Proxy Key** field in the WHMCS module.
+---
 
-```bash
-screen
-./vncwebproxy puqcloud
-```
+## Configuring WHMCS Product Settings
 
-After a successful launch you can watch the request log directly in the console:
+Once your proxy is running (via Docker or standalone), navigate to:
+**WHMCS Admin Area → System Settings → Products/Services → Products/Services**
 
-```
-root@vncproxy:~# ./vncwebproxy puqcloud
-[./vncwebproxy puqcloud]
-proxmox-test.uuq.pl59002022/09/11 19:11:08 [vncproxy][debug] ServeWS
-2022/09/11 19:11:08 [vncproxy][debug] request url: /vncproxy/proxmox-test.uuq.pl/5900/d91bac199c2ce79392d8e175076e3780
-2022/09/11 19:11:13 [vncproxy][info] close peer
-[GIN] 2022/09/11 - 19:11:13 | 200 |  4.740249024s |   79.184.10.217 | GET      "/vncproxy/proxmox-test.uuq.pl/5900/d91bac199c2ce79392d8e175076e3780"
-```
+1. Select your Proxmox KVM product and open the **Module Settings** tab.
+2. Scroll to the **Integrations Configuration** section.
+3. Configure:
+   - **noVNC Proxy Domain**: `https://vncproxy.yourdomain.com`
+   - **noVNC Proxy Key**: `my_secure_proxy_key_123` (matching the `PROXY_KEY` environment variable or CLI argument)
+4. Click **Save Changes**.
 
-Detach from `screen` with `Ctrl+A` then `D`. Reattach later with `screen -r`.
+---
 
-### Step 8: Configure WHMCS
+## Client Console Access
 
-In the WHMCS product settings, under **Module Settings → Integrations Configuration**, fill in:
-
-- **noVNC Proxy Domain** → `https://vncproxy.your-domain.tld`
-- **noVNC Proxy Key** → the key you passed to `./vncwebproxy` (in our example: `puqcloud`)
-
-Save the product and try opening the console from the client area.
-
-## Client Access
-
-When noVNC is configured, clients see a **Console** button in their VM management area. Clicking it opens a new browser window with the noVNC console, providing full keyboard and mouse access to the virtual machine.
+When configured, clients see the **Console** button in their VM management view. Clicking it opens a secure browser window with full keyboard, video, and mouse interaction.
 
 ![noVNC connecting](../img/client-area-novnc-connecting.png)
+*client-area-novnc-connecting.png*
 
-## Security
+---
 
-The security configuration of the vncproxy server should meet your own standards. A few mandatory points:
+## Security & Firewall Requirements
 
-- Allow inbound TCP **80/443** from the internet (clients need HTTPS access to noVNC).
-- Allow outbound TCP **5900–5999** from the vncproxy host to your Proxmox nodes.
-- Keep the OS, NGINX and the `vncwebproxy` binary up to date.
-- Each console session uses a **one-time ticket** — tickets are generated on demand, expire after a short period, and are validated against the Proxmox API before the connection is established.
-- All traffic between the client browser and the proxy is encrypted via SSL/TLS (Let's Encrypt certificate).
-
-Do not forget that for correct operation you must allow HTTPS to the proxy and outgoing connections from the proxy to the Proxmox server.
+- **Inbound Ports to Proxy**: Allow TCP **80** and **443** from the public internet.
+- **Outbound Ports from Proxy to Proxmox**: Allow TCP **5900–5999** from the proxy server to each Proxmox VE cluster node.
+- **DNS Resolution**: If Proxmox hostnames are used instead of IP addresses in WHMCS, ensure the proxy server can resolve those hostnames.
+- **One-Time Tickets**: Every session uses a short-lived one-time ticket generated by the Proxmox API, ensuring sessions cannot be hijacked or reused.

@@ -1,7 +1,7 @@
 # Backups
 
 ### Proxmox KVM module **[WHMCS](https://puqcloud.com/link.php?id=77)**
-#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [FAQ](https://faq.puqcloud.com/)
+#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [Community](https://community.puqcloud.com/)
 
 The Backups page provides full VM backup management, including scheduled automatic backups, manual on-demand backups, restore from backup, and backup removal.
 
@@ -42,6 +42,7 @@ For each backup, two actions are available:
 A warning note reminds the client: "In the case of a backup restore, all snapshots of Virtual Machine will be deleted."
 
 ![Backups page](../img/client-area-backups-schedule.png)
+*client-area-backups-schedule.png*
 
 ## How scheduled backups run
 

@@ -1,7 +1,7 @@
 # Addon Module Setup
 
 ### Proxmox KVM module **[WHMCS](https://puqcloud.com/link.php?id=77)**
-#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [FAQ](https://faq.puqcloud.com/)
+#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [Community](https://community.puqcloud.com/)
 
 ## After Activation
 
@@ -18,6 +18,7 @@ No manual database setup is required.
 Navigate to **Addons > PUQ Proxmox KVM** in the WHMCS admin menu. The addon dashboard provides a centralized management interface.
 
 ![Addon dashboard](../img/addon-dashboard-home.png)
+*addon-dashboard-home.png*
 
 ## Addon Features
 

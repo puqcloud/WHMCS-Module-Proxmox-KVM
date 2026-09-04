@@ -1,13 +1,14 @@
 # Service Management
 
 ### Proxmox KVM module **[WHMCS](https://puqcloud.com/link.php?id=77)**
-#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [FAQ](https://faq.puqcloud.com/)
+#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [Community](https://community.puqcloud.com/)
 
 The service management page is the primary admin interface for an individual client's KVM service. It is accessed by navigating to **Clients > [Client Name] > Products/Services > [Service]** and viewing the module's custom tab fields.
 
 The page provides real-time VM status monitoring, resource usage visualization, deploy logging, console access, performance charts, and direct module command execution.
 
 ![Service detail overview](../img/admin-service-detail.png)
+*admin-service-detail.png*
 
 ---
 
@@ -29,6 +30,7 @@ The module checks connectivity to the Proxmox API on each page load. A green **A
 Below the connection status, a toolbar provides quick-action buttons:
 
 ![Module command buttons](../img/admin-service-module-commands.png)
+*admin-service-module-commands.png*
 
 | Button | Description |
 |--------|-------------|
@@ -39,6 +41,7 @@ Below the connection status, a toolbar provides quick-action buttons:
 ### noVNC Console
 
 ![noVNC connect button](../img/admin-service-novnc-connect.png)
+*admin-service-novnc-connect.png*
 
 Clicking **noVNC** sends an AJAX request to the module, which obtains a VNC ticket from Proxmox and constructs a proxy URL. The link opens in a new 800x600 browser window. The URL is single-use and expires after 10 seconds for security.
 
@@ -49,6 +52,7 @@ Clicking **noVNC** sends an AJAX request to the module, which obtains a VNC tick
 The module registers a set of administrative command buttons in the WHMCS **Module Commands** section of the service page.
 
 ![Module command buttons](../img/admin-service-module-commands.png)
+*admin-service-module-commands.png*
 
 | Command | Description | Notes |
 |---------|-------------|-------|
@@ -113,6 +117,7 @@ Alongside the local status the module tracks:
 The real-time information panel refreshes automatically every 5 seconds (with a 10-second initial load). It displays comprehensive VM status and resource usage in a two-column layout.
 
 ![Real-time VM info panel](../img/admin-service-realtime-info.png)
+*admin-service-realtime-info.png*
 
 ### Left Column: Status and Compute
 
@@ -133,6 +138,7 @@ The real-time information panel refreshes automatically every 5 seconds (with a 
 ### Right Column: Storage and Network
 
 ![Detailed status closeup](../img/admin-service-realtime-detail-closeup.png)
+*admin-service-realtime-detail-closeup.png*
 
 **System Disk Section:**
 
@@ -162,6 +168,7 @@ Same fields as the system disk section, displayed for the secondary disk.
 A dedicated **Configurable Options** tab on the service page shows the effective per-service selection of every WHMCS Configurable Option that is assigned to the product. Useful for confirming which pricing tier the client actually picked without having to dig into the database or the order itself.
 
 ![Service Configurable Options tab](../img/admin-service-configurable-options-v3.3.png)
+*admin-service-configurable-options-v3.3.png*
 
 The tab lists each option by its plain-English name (`CPU Cores`, `RAM`, `System Disk`, `Backups`, `Snapshots`, etc.) together with the human-readable display text of the selected sub-option. When no Configurable Option is assigned for a given resource, the Module Settings default is used and that resource simply does not appear in this tab — see the [Product Configuration chapter](01-product-configuration.md) for where each default lives.
 
@@ -174,6 +181,7 @@ See the dedicated [Configurable Options chapter](03-configurable-options.md) for
 The deploy log panel is toggled by clicking the **Deploy Log** button. It provides a complete history of all provisioning and administrative operations performed on the VM.
 
 ![Deploy log with steps](../img/admin-service-deploy-log-steps.png)
+*admin-service-deploy-log-steps.png*
 
 ### Last Action
 
@@ -215,6 +223,7 @@ Each step in the detail table includes:
 The charts section displays CPU, memory, disk I/O, and network throughput graphs rendered using Google Charts. The data is fetched via AJAX from Proxmox's RRD statistics.
 
 ![Usage charts and metrics](../img/admin-service-usage-charts-metrics.png)
+*admin-service-usage-charts-metrics.png*
 
 ### Time Frame Selection
 
@@ -245,6 +254,7 @@ Three area charts are displayed side by side:
 When a service's product/package is changed (upgrade or downgrade), the module executes a multi-step reconfiguration process. The admin can monitor progress through the deploy log.
 
 ![Change package in progress](../img/admin-service-change-package-waiting.png)
+*admin-service-change-package-waiting.png*
 
 The change package operation follows this sequence:
 
@@ -260,5 +270,6 @@ The change package operation follows this sequence:
 10. Start the VM
 
 ![Change package complete](../img/admin-service-change-package-success.png)
+*admin-service-change-package-success.png*
 
 Each step is logged individually in the deploy log. If any step fails, the process halts and the error is recorded. The admin can review the failure in the deploy log and either fix the issue manually or use the **Redeploy** button to start fresh.

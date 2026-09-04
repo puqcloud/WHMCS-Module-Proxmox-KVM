@@ -1,7 +1,7 @@
 # DNS Zones
 
 ### Proxmox KVM module **[WHMCS](https://puqcloud.com/link.php?id=77)**
-#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [FAQ](https://faq.puqcloud.com/)
+#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [Community](https://community.puqcloud.com/)
 
 DNS Zones enable automatic management of forward (A/AAAA) and reverse (PTR) DNS records for every virtual machine the module provisions. Configure your zones once and the module takes care of creation on deploy, refresh on package change, and cleanup on termination — across all three supported providers.
 
@@ -12,6 +12,7 @@ DNS Zones enable automatic management of forward (A/AAAA) and reverse (PTR) DNS 
 Navigate to **Addons → PUQ Proxmox KVM → DNS Zones**.
 
 ![DNS Zones list with multiple providers and reverse zones](../img/dns-zones-list-multi-provider.png)
+*dns-zones-list-multi-provider.png*
 
 Each zone line shows: internal ID, the zone name, the provider type badge, and per-row actions (**Test** connection, **Edit**, **Delete**).
 
@@ -32,6 +33,7 @@ The module supports three DNS providers. You can mix them freely — forward zon
 Click **+ Add DNS Zone**. Choose the provider in the Type dropdown; the form fields change to match the provider.
 
 ![Add DNS Zone — Cloudflare](../img/addon-dns-zone-add-cloudflare.png)
+*addon-dns-zone-add-cloudflare.png*
 
 ### Cloudflare
 
@@ -96,6 +98,7 @@ You can add **multiple zones of different providers with the same name**. For ex
 You don't have to compute the reverse zone name for an IP pool by hand. The addon does it for you on the IP Pools page: the required **rDNS zone** for each pool is shown on the second line in the Addresses column, and live in the add/edit modal as you type the prefix:
 
 ![IP Pools page with rDNS zone hint for each pool](../img/ip-pools-with-rdns-zone-hint.png)
+*ip-pools-with-rdns-zone-hint.png*
 
 Example from the screenshot:
 

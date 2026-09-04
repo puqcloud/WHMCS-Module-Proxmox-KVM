@@ -1,17 +1,19 @@
 # Configurable Options
 
 ### Proxmox KVM module **[WHMCS](https://puqcloud.com/link.php?id=77)**
-#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [FAQ](https://faq.puqcloud.com/)
+#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [Community](https://community.puqcloud.com/)
 
 WHMCS Configurable Options allow clients to customize their virtual machine resources at order time and during upgrades. The PUQ Proxmox KVM module reads configurable option values and uses them to override the product's default settings during provisioning and change package operations.
 
 > **New in v3.3.** Eleven new options (every disk size / bandwidth / IOPS parameter plus Network Bandwidth) and clean plain-English names for the four previously prefix-only ones (`Backups`, `Snapshots`, `IPv4 Addresses`, `IPv6 Addresses`). Every overridable resource also has a default in Module Settings, so a product works without any Configurable Options at all.
 
 ![Full list of Configurable Options assigned to a product](../img/admin-configurable-options-list-v3.3.png)
+*admin-configurable-options-list-v3.3.png*
 
 The screenshot above shows all 18 supported options assigned to a single product. The next screenshot shows how a client sees them on the order form:
 
 ![Client order form with Configurable Options](../img/client-order-configurable-options.png)
+*client-order-configurable-options.png*
 
 ---
 
@@ -383,6 +385,7 @@ The change package process is logged step-by-step in the [Deploy Log](02-service
 **System Disk and Additional Disk size can only be increased.** Proxmox does not support shrinking VM disks (it would risk corrupting/losing data), so any configurable option that would result in a smaller disk than the current size is rejected by the module.
 
 ![Client upgrade page with shrink protection — smaller disk options are disabled with a clear warning banner](../img/client-upgrade-configurable-options.png)
+*client-upgrade-configurable-options.png*
 
 ### How it is enforced
 

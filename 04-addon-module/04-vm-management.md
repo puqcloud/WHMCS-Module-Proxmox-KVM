@@ -1,7 +1,7 @@
 # VM Management
 
 ### Proxmox KVM module **[WHMCS](https://puqcloud.com/link.php?id=77)**
-#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [FAQ](https://faq.puqcloud.com/)
+#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [Community](https://community.puqcloud.com/)
 
 The VM Management page provides a centralized view of every KVM virtual machine across every Proxmox server — their current status, assigned IPs with reverse DNS, deployment history, and per-VM admin actions.
 
@@ -10,6 +10,7 @@ The VM Management page provides a centralized view of every KVM virtual machine 
 Navigate to **Addons → PUQ Proxmox KVM → VM Management**.
 
 ![VM Management with active services](../img/vm-management-active-services.png)
+*vm-management-active-services.png*
 
 The list is server-side-paginated with search and sorting. Two dropdown filters above the table narrow the view by WHMCS service status and by VM state; both remember your last choice in the browser, so the list opens the way you left it next time.
 
@@ -70,6 +71,7 @@ The Reset modal lets you switch a VM to any of the re-runnable states. An embedd
 The Log modal shows every pipeline run — deploy, change package, set DNS records, terminate — with per-step duration, result, and any errors. The most recent 50 runs are kept.
 
 ![VM Log showing deploy steps](../img/addon-vm-log-deploy-steps.png)
+*addon-vm-log-deploy-steps.png*
 
 When the last run failed, a red banner at the top shows the failing action and error message. Each step row shows:
 
@@ -99,16 +101,19 @@ Skipped steps in change package (see [Change Package](../07-cron-and-automation/
 After clicking a long-running action (Terminate, Set DNS records), the VM row reflects the current state badge in real time. You can watch status changes by refreshing the page or by tracking the cron standalone output:
 
 ![VM Management during a termination](../img/vm-management-terminate-in-progress.png)
+*vm-management-terminate-in-progress.png*
 
 Once the cron finishes, the row appears with the final state — `remove` on success, `error_terminate` on failure:
 
 ![VM Management showing terminated services](../img/vm-management-terminated-list.png)
+*vm-management-terminated-list.png*
 
 ## DB Record editor
 
 For advanced troubleshooting, click **DB Record** to view and edit the raw `puqProxmoxKVM_vm_info` row:
 
 ![DB Record editor](../img/addon-vm-db-record-edit.png)
+*addon-vm-db-record-edit.png*
 
 > **Warning:** Direct database editing bypasses every safeguard in the state machine. Incorrect values cause deployment failures, incorrect IP accounting, or data loss. Use only when you know exactly what you're doing and the usual Reset / Redeploy actions cannot help.
 

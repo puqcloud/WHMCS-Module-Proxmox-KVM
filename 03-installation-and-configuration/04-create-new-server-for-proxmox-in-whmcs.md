@@ -1,7 +1,7 @@
 # Create new server for Proxmox in WHMCS
 
 ### Proxmox KVM module **[WHMCS](https://puqcloud.com/link.php?id=77)**
-#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [FAQ](https://faq.puqcloud.com/)
+#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [Community](https://community.puqcloud.com/)
 
 ## Preface
 
@@ -16,6 +16,7 @@ Log in to your WHMCS panel and create a new Proxmox server:
 **System Settings → Products/Services → Servers → Add New Server**
 
 ![Navigate to Servers and click Add New Server](../img/whmcs-add-new-server-nav.png)
+*whmcs-add-new-server-nav.png*
 
 ### Step 1: Name, Hostname and Assigned IP Addresses
 
@@ -23,6 +24,7 @@ Log in to your WHMCS panel and create a new Proxmox server:
 - In the **Assigned IP Addresses** field enter the list of IP addresses that will be reserved for virtual machines built on this server.
 
 ![Name, Hostname and Assigned IP Addresses fields](../img/whmcs-server-name-hostname-ips.png)
+*whmcs-server-name-hostname-ips.png*
 
 > **Note.** Starting with module version **1.3**, the module supports IPv4/IPv6 pools managed in the addon. For new installations this is the recommended way to manage IP addresses — see the **IP Pools** chapter of this documentation. The "Assigned IP Addresses" field described below is the legacy format and is kept for backward compatibility.
 
@@ -77,10 +79,12 @@ In the **Server Details** section select the **PUQ Proxmox KVM** module and ente
 #### Version 2.3+ — Token authentication
 
 ![Server Details with Proxmox token authentication (v2.3+)](../img/whmcs-server-module-token-auth.png)
+*whmcs-server-module-token-auth.png*
 
 #### Version 2.2 and earlier — Password authentication
 
 ![Server Details with Proxmox password authentication (v2.2-)](../img/whmcs-server-module-password-auth.png)
+*whmcs-server-module-password-auth.png*
 
 ##### Creating a Proxmox API Token
 
@@ -100,6 +104,7 @@ The resulting username for WHMCS will look like `root@pam!whmcs` and the passwor
 If you have only one Proxmox server, or you do not use server groups, open the server entry and tick **"Make this server the active default for new signups"**. Otherwise newly ordered products will not be assigned to this server automatically.
 
 ![Make this server the active default for new signups](../img/whmcs-server-set-as-default.png)
+*whmcs-server-set-as-default.png*
 
 ## Test Connection
 

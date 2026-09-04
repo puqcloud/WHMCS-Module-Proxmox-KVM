@@ -1,7 +1,7 @@
 # Deploy Process
 
 ### Proxmox KVM module **[WHMCS](https://puqcloud.com/link.php?id=77)**
-#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [FAQ](https://faq.puqcloud.com/)
+#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [Community](https://community.puqcloud.com/)
 
 ## Overview
 
@@ -64,6 +64,7 @@ There is **no retry count limit**. A VM that genuinely cannot deploy (misconfigu
 The `clone → set_dns` transition is where forward and reverse DNS records are registered. With many IPs or many DNS zones, this can involve dozens of API calls. Starting with v3.2 each DNS operation is logged live to the cron output, so admins can watch records being created in real time:
 
 ![Cron live output showing DNS operations during deploy](../img/cron-deploy-dns-and-steps.png)
+*cron-deploy-dns-and-steps.png*
 
 Lines prefixed with `· fwd OK` are forward (A/AAAA) creations, `· rev OK` are reverse (PTR) creations. Per-zone failures (for example, one DNS provider is temporarily unreachable) are logged as `· fwd ERR` / `· rev ERR` but do **not** abort deployment — other zones and subsequent steps still run.
 
@@ -72,6 +73,7 @@ Lines prefixed with `· fwd OK` are forward (A/AAAA) creations, `· rev OK` are 
 A successful deploy looks like this in the standalone cron output (`php cron.php`). Each step shows its duration and the state transition:
 
 ![Full deploy pipeline in cron output](../img/cron-deploy-full-pipeline.png)
+*cron-deploy-full-pipeline.png*
 
 Every line is flushed to stdout immediately — nothing is buffered until the end. This means even during a long-running step (full clone of a large template, cross-node migration) you can tell whether the job is still making progress or has truly stalled.
 
@@ -80,6 +82,7 @@ Every line is flushed to stdout immediately — nothing is buffered until the en
 In the addon's **VM Management → Log** modal, every run is recorded with per-step duration, state transitions, and any errors:
 
 ![Deploy log in VM Management](../img/addon-vm-log-deploy-steps.png)
+*addon-vm-log-deploy-steps.png*
 
 The most recent 50 runs are kept per VM. If the last attempt paused partway, the log is marked `waiting` with an `error` field showing why — useful for diagnosing a sticky step.
 

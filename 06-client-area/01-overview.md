@@ -1,7 +1,7 @@
 # Overview
 
 ### Proxmox KVM module **[WHMCS](https://puqcloud.com/link.php?id=77)**
-#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [FAQ](https://faq.puqcloud.com/)
+#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [Community](https://community.puqcloud.com/)
 
 The Overview page is the main management screen displayed when a client opens their Proxmox KVM service. It provides real-time VM status information, quick action buttons, and a complete network configuration summary.
 
@@ -40,6 +40,7 @@ The overview displays live VM metrics that auto-refresh every 7 seconds:
 | **Network adapter** | Network adapter model, MAC address, and link speed |
 
 ![VM overview](../img/client-area-manage-overview.png)
+*client-area-manage-overview.png*
 
 ## Network Configuration
 
@@ -55,6 +56,7 @@ Below the real-time information panel, the network configuration section display
 An informational note reminds the client that only the main IP address is automatically configured on the network interface. Additional IP addresses must be configured manually inside the VM.
 
 ![Network configuration](../img/client-area-network-configuration.png)
+*client-area-network-configuration.png*
 
 ## Disabled actions
 
@@ -67,6 +69,7 @@ When a feature is not permitted by the product's client-area permissions (or is 
 Every sub-page in the client service area (Snapshots, Backups, Firewall, Reset password, revDNS, ISO, Charts, Reinstall) has a sidebar **navigation menu** that allows the client to jump between settings without going back to the overview each time.
 
 ![Client area sidebar](../img/client-area-sidebar-navigation.png)
+*client-area-sidebar-navigation.png*
 
 If the client navigates directly to a page for a feature that the product does not allow, they see an **Access Denied** error message instead of the feature's UI. The `Overview` and `noVNC` buttons cannot be hidden — they are always available.
 

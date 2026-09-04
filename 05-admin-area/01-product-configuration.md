@@ -1,13 +1,14 @@
 # Product Configuration
 
 ### Proxmox KVM module **[WHMCS](https://puqcloud.com/link.php?id=77)**
-#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [FAQ](https://faq.puqcloud.com/)
+#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [Community](https://community.puqcloud.com/)
 
 The product configuration page defines all default settings for virtual machines provisioned under a given WHMCS product. These settings are accessible by navigating to **Setup > Products/Services > Products/Services**, selecting a product, and opening the **Module Settings** tab with **PUQ ProxmoxKVM** selected as the module.
 
 The module injects a custom settings panel directly below the standard WHMCS module options. All settings are organized into collapsible sections arranged in a two-column layout.
 
 ![Full product configuration page](../img/admin-product-config-full.png)
+*admin-product-config-full.png*
 
 > **Changed in v3.0.** The product configuration page has been fully rewritten as a custom Bootstrap panel injected into the Module Settings tab. In v1.x–v2.x the same options were stored in the stock WHMCS `configoption1..N` fields and displayed as plain textareas — all existing values are preserved during upgrade and migrated to the new panel automatically. The **Firewall** section and the **Anti-spoofing** checkbox, which previously lived inside the Network block, are now a dedicated collapsible section of their own.
 
@@ -23,7 +24,8 @@ The first field in the standard WHMCS module settings area is the **License key*
 
 This section controls the core virtual machine parameters applied during provisioning.
 
-![VM Configuration section](../img/admin-product-config-vm-section-v3.3.png)
+![VM Configuration section](../img/admin-product-config-vm-snapshots.png)
+*admin-product-config-vm-snapshots.png*
 
 | Setting | Description | Default |
 |---------|-------------|---------|
@@ -37,7 +39,8 @@ This section controls the core virtual machine parameters applied during provisi
 | **VM name rule** | A naming pattern for the VM hostname. Supports macros that are expanded at provisioning time. Leave empty to use the default pattern. A live preview is shown below the field. | `{client_id}-{service_id}` |
 | **First VM ID** | The starting VM ID number. The module assigns VM IDs sequentially from this value, skipping any IDs already in use on the Proxmox cluster. | `100` |
 | **OS username** | The default operating system username set via cloud-init. Leave empty to generate a random username. | (empty = random) |
-| **Snapshot lifetime** | Automatic cleanup period for client-created snapshots. The cron job removes snapshots older than the selected duration. Set to **Don't remove** to keep snapshots indefinitely. | `Don't remove` |
+| **Snapshot schedule mode** *(new in v4.0)* | When enabled, snapshots operate on an automated schedule with automatic FIFO rotation (identical to backups). The client sets up weekly schedules, and older snapshots are rotated when the quota is reached. When enabled, **Snapshot lifetime** is ignored and disabled. | `Off` |
+| **Snapshot lifetime** | Automatic cleanup period for client-created snapshots. Active only when **Snapshot schedule mode** is disabled. The cron job removes snapshots older than the selected duration. Set to **Don't remove** to keep snapshots indefinitely. Automatically disabled when schedule mode is enabled. | `Don't remove` |
 
 ### VM Name Rule Macros
 
@@ -80,6 +83,7 @@ The following macros can be used in the **VM name rule** field:
 This section configures the virtual network adapter and IP addressing behavior for provisioned VMs.
 
 ![Network section](../img/admin-product-config-network-section.png)
+*admin-product-config-network-section.png*
 
 | Setting | Description | Default |
 |---------|-------------|---------|
@@ -104,6 +108,7 @@ This section configures the virtual network adapter and IP addressing behavior f
 This section defines the default Proxmox firewall configuration applied to each provisioned VM's network interface.
 
 ![Firewall section](../img/admin-product-config-firewall-section.png)
+*admin-product-config-firewall-section.png*
 
 ### Policy and Logging
 
@@ -135,6 +140,7 @@ This section defines the default Proxmox firewall configuration applied to each 
 This section configures the system (boot) disk and optional additional (secondary) disk for provisioned VMs. A value of **0** means "not changed" — the template's default is preserved.
 
 ![Storage section](../img/admin-product-config-storage-section.png)
+*admin-product-config-storage-section.png*
 
 ### System Disk
 
@@ -169,6 +175,7 @@ The additional disk is automatically created during provisioning if the space is
 This section configures external integrations: backup/ISO storage locations, noVNC console proxy, domain naming, reverse DNS ticket creation, and email notification templates.
 
 ![Integrations section](../img/admin-product-config-integrations-section.png)
+*admin-product-config-integrations-section.png*
 
 ### Storage and Console
 
@@ -203,6 +210,7 @@ These dropdowns list all WHMCS product-type email templates. Select the template
 This section controls which features are visible and accessible to clients in their service management area. Each toggle enables or disables a specific client area function.
 
 ![Client Area Permissions](../img/admin-product-config-client-permissions.png)
+*admin-product-config-client-permissions.png*
 
 | Permission | Description | Default |
 |------------|-------------|---------|
@@ -223,6 +231,7 @@ This section controls which features are visible and accessible to clients in th
 The module includes a built-in WHMCS Usage Billing (Metric) Provider that reports monthly bandwidth consumption per service. This integrates with WHMCS's standard metric billing system.
 
 ![Metric billing toggle](../img/admin-product-config-metric-billing.png)
+*admin-product-config-metric-billing.png*
 
 ### Available Metrics
 

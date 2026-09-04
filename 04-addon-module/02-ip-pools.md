@@ -1,7 +1,7 @@
 # IP Pools
 
 ### Proxmox KVM module **[WHMCS](https://puqcloud.com/link.php?id=77)**
-#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [FAQ](https://faq.puqcloud.com/)
+#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [Community](https://community.puqcloud.com/)
 
 IP Pools allow you to manage blocks of IPv4 and IPv6 addresses that are automatically assigned to virtual machines during provisioning.
 
@@ -14,6 +14,7 @@ IP Pools allow you to manage blocks of IPv4 and IPv6 addresses that are automati
 Navigate to **Addons > PUQ Proxmox KVM > IP Pools** to view all configured pools.
 
 ![IP Pools list with rDNS zone hints](../img/ip-pools-with-rdns-zone-hint.png)
+*ip-pools-with-rdns-zone-hint.png*
 
 > **New in v3.2.** The Addresses column now shows the ready-made **rDNS zone name** that corresponds to each pool's prefix — copy it directly into the [DNS Zones](03-dns-zones.md) form when you want reverse DNS for that pool's IPs. No need to compute nibble reversals by hand. Both IPv4 (`/8`, `/16`, `/24`) and IPv6 (any nibble-aligned prefix) are supported.
 
@@ -37,6 +38,7 @@ The table displays:
 Click **+ Add IP Pool** to open the creation dialog.
 
 ![Add IP Pool modal](../img/addon-ip-pool-add-modal.png)
+*addon-ip-pool-add-modal.png*
 
 Fill in the following fields:
 
@@ -58,6 +60,7 @@ Fill in the following fields:
 Click the **Edit** button next to any pool to modify its settings.
 
 ![Edit IP Pool modal](../img/addon-ip-pool-edit-modal.png)
+*addon-ip-pool-edit-modal.png*
 
 > **Note:** Modifying a pool does not affect already-assigned IP addresses. Changes only apply to new allocations.
 

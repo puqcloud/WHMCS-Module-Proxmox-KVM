@@ -1,7 +1,7 @@
 # Server Groups vs. Target Node
 
 ### Proxmox KVM module **[WHMCS](https://puqcloud.com/link.php?id=77)**
-#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [FAQ](https://faq.puqcloud.com/)
+#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [Community](https://community.puqcloud.com/)
 
 ## Question
 
@@ -25,6 +25,7 @@ If you want to ensure that virtual machines are always created on one specific s
 The **Target Node** parameter is configured per product in the **VM Configuration** section of the Module Settings tab (**Setup > Products/Services > Products/Services > [product] > Module Settings**):
 
 ![Server Group (WHMCS-level) and Target Node (module-level) on the product Module Settings tab](../img/admin-product-config-server-group-target-node.png)
+*admin-product-config-server-group-target-node.png*
 
 The dropdown is populated via AJAX from the Proxmox server (or cluster) selected by WHMCS. Leave the value as **automatically** to let the module pick the node with the most free resources, or choose a specific node to pin all deployments of this product to it.
 

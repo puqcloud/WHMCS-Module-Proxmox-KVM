@@ -1,7 +1,7 @@
 # ISO Mount
 
 ### Proxmox KVM module **[WHMCS](https://puqcloud.com/link.php?id=77)**
-#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [FAQ](https://faq.puqcloud.com/)
+#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [Community](https://community.puqcloud.com/)
 
 The ISO Mount page allows clients to mount and unmount ISO images on their virtual machine's virtual CD/DVD drive. ISO images are organized into categorized folders for easy browsing.
 
@@ -42,6 +42,7 @@ Follow this convention when uploading ISOs to your Proxmox ISO storage. PUQcloud
 3. The ISO is ejected from the virtual CD/DVD drive.
 
 ![ISO mount page](../img/client-area-iso-mount.png)
+*client-area-iso-mount.png*
 
 ## Use Cases
 

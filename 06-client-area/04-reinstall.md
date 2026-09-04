@@ -1,7 +1,7 @@
 # Reinstall
 
 ### Proxmox KVM module **[WHMCS](https://puqcloud.com/link.php?id=77)**
-#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [FAQ](https://faq.puqcloud.com/)
+#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [Community](https://community.puqcloud.com/)
 
 The Reinstall page allows clients to reinstall the operating system on their virtual machine. This is a destructive operation that replaces the current OS with a fresh installation from the selected template.
 
@@ -14,6 +14,7 @@ The Reinstall page allows clients to reinstall the operating system on their vir
 5. Click the **Reinstall** button to begin the process.
 
 ![Reinstall page](../img/client-area-reinstall.png)
+*client-area-reinstall.png*
 
 ## What Happens During Reinstall
 

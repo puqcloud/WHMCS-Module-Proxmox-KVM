@@ -1,7 +1,7 @@
 # noVNC Console
 
 ### Proxmox KVM module **[WHMCS](https://puqcloud.com/link.php?id=77)**
-#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [FAQ](https://faq.puqcloud.com/)
+#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [Community](https://community.puqcloud.com/)
 
 The noVNC console provides browser-based remote access to the virtual machine's display, allowing clients to interact with their VM directly without requiring a separate VNC client application.
 
@@ -12,18 +12,21 @@ The noVNC console provides browser-based remote access to the virtual machine's 
 3. Click **CONNECT** to open the noVNC console in a new browser tab.
 
 ![noVNC connect button](../img/client-area-novnc-connecting.png)
+*client-area-novnc-connecting.png*
 
 ## Connecting
 
 After clicking the CONNECT button, a new browser tab opens and establishes a secure, encrypted WebSocket connection to the Proxmox VNC proxy. A status indicator in the console confirms the connection, showing the target QEMU VM identifier.
 
 ![noVNC console connecting](../img/client-area-novnc-console-open.png)
+*client-area-novnc-console-open.png*
 
 ## Console View
 
 Once connected, the full noVNC console is displayed, providing direct keyboard and mouse interaction with the VM. The console toolbar on the left side provides additional controls for clipboard, screen scaling, and connection settings.
 
 ![noVNC console connected](../img/novnc-console-connected.png)
+*novnc-console-connected.png*
 
 ## Important Notes
 

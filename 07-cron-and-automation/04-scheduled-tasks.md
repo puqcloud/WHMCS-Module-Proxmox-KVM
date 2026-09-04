@@ -1,21 +1,22 @@
 # Scheduled Tasks
 
 ### Proxmox KVM module **[WHMCS](https://puqcloud.com/link.php?id=77)**
-#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [FAQ](https://faq.puqcloud.com/)
+#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [Community](https://community.puqcloud.com/)
 
 ## Overview
 
-The module runs six scheduled tasks through the cron system. Each task has a configurable interval and independent lock management to prevent overlapping executions.
+The module runs seven scheduled tasks through the cron system. Each task has a configurable interval and independent lock management to prevent overlapping executions.
 
 ## Task List
 
 | Task | Default Interval | Description |
 |------|------------------|-------------|
 | **Process VMs** | 1 minute | Processes the deploy and change package pipelines. Picks up VMs in non-ready states and executes the next step in their pipeline. Also handles DNS record creation and updates. This is the primary task responsible for VM provisioning and modification. |
-| **Remove Snapshots** | 60 minutes | Checks for expired snapshots based on the configured snapshot lifetime setting and automatically removes them from Proxmox. Keeps the snapshot count manageable and frees up storage. |
+| **Remove Snapshots** | 60 minutes | Checks for expired snapshots based on the configured snapshot lifetime setting and automatically removes them from Proxmox for services using lifetime mode. Automatically skips VMs with Snapshot schedule mode enabled. |
 | **Restore Backup** | 5 minutes | Monitors active backup restore tasks on Proxmox. When a restore operation completes, it updates the VM status and sends the "Backup restored" email notification to the client. |
 | **Backup Status** | 5 minutes | Monitors active manual backup tasks on Proxmox. When a backup operation completes, it updates the backup record with the result (success or failure). |
 | **Schedule Backup** | 60 minutes | Executes scheduled backups based on per-VM backup schedules. Checks each VM's configured backup days and initiates a backup if one is due. Runs once per day per VM per scheduled day. |
+| **Schedule Snapshot** *(new in v4.0)* | 5 minutes | Executes scheduled snapshots based on per-VM snapshot schedules. Checks each VM's configured snapshot days and times, creates an automated snapshot titled `Scheduler: YYYY-MM-DD`, and automatically rotates (deletes) the oldest snapshot if the service quota is reached. |
 | **Collect Statistics** | 60 minutes | Aggregates network traffic statistics (inbound and outbound bytes) from Proxmox RRD data. Used for WHMCS Metric Billing to enable usage-based network traffic billing. |
 
 ## Configuring Task Intervals
@@ -47,6 +48,7 @@ If a task appears to be stuck, you can check and manage locks from the addon's C
 The module provides command-line tools for manual task execution and diagnostics. These can be useful for troubleshooting or for running tasks on demand outside the normal cron schedule.
 
 ![CLI help output](../img/addon-cron-cli-help.png)
+*addon-cron-cli-help.png*
 
 To see available CLI commands, run:
 

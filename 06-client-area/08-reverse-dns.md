@@ -1,7 +1,7 @@
 # Reverse DNS
 
 ### Proxmox KVM module **[WHMCS](https://puqcloud.com/link.php?id=77)**
-#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [FAQ](https://faq.puqcloud.com/)
+#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [Community](https://community.puqcloud.com/)
 
 The Reverse DNS page allows clients to configure PTR (pointer) records for all IP addresses assigned to their virtual machine. Reverse DNS records map IP addresses back to hostnames and are commonly required for mail servers and other services that perform reverse lookups.
 
@@ -20,6 +20,7 @@ The page lists all assigned addresses, including:
 Each address has its own hostname input field, allowing independent reverse DNS configuration per IP.
 
 ![Reverse DNS page](../img/client-area-reverse-dns.png)
+*client-area-reverse-dns.png*
 
 ## DNS Propagation
 

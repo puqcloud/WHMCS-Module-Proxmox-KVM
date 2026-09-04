@@ -1,7 +1,7 @@
 # Change Package
 
 ### Proxmox KVM module **[WHMCS](https://puqcloud.com/link.php?id=77)**
-#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [FAQ](https://faq.puqcloud.com/)
+#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [Community](https://community.puqcloud.com/)
 
 ## Overview
 
@@ -45,6 +45,7 @@ In the log this shows up as lines like `cp_system_disk_size skip → cp_system_d
 The first step (`change_package → cp_update_ip`) triggers a full DNS sync — old records for removed IPs are deleted, new records for added IPs are created. All matching DNS zones are updated. With v3.2 each operation is logged live so admins can watch the refresh happen:
 
 ![Change package DNS refresh live in cron output](../img/cron-change-package-dns-refresh.png)
+*cron-change-package-dns-refresh.png*
 
 `fwd-del OK` / `rev-del OK` lines are the old records being removed; `fwd OK` / `rev OK` lines below are the new records being created. Failures in one provider do not block the rest — DNS errors are non-blocking exactly like they are during deploy.
 
@@ -53,6 +54,7 @@ The first step (`change_package → cp_update_ip`) triggers a full DNS sync — 
 A complete upgrade in the cron output, including a step that failed to start the VM on the first attempt and was retried on the next tick:
 
 ![Change package pipeline with retry](../img/cron-change-package-steps-with-retry.png)
+*cron-change-package-steps-with-retry.png*
 
 Successful steps show `success`, skipped steps show `skip (no change)`, and the failed `cp_start` step gets retried until it succeeds. At no point is the state machine forced to restart from the beginning — retry only re-runs the step that didn't complete.
 
@@ -61,6 +63,7 @@ Successful steps show `success`, skipped steps show `skip (no change)`, and the 
 Every change package run writes a structured entry to `vm_last_action_log` on the VM record. In the addon's VM Management the **Log** modal shows each step with its duration, result, and any skip markers:
 
 ![Change package log with per-step detail](../img/cron-change-package-log-success.png)
+*cron-change-package-log-success.png*
 
 If the last run had any failures the modal shows a red error banner at the top with the failure reason.
 

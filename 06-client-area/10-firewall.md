@@ -1,7 +1,7 @@
 # Firewall
 
 ### Proxmox KVM module **[WHMCS](https://puqcloud.com/link.php?id=77)**
-#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [FAQ](https://faq.puqcloud.com/)
+#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [Community](https://community.puqcloud.com/)
 
 The Firewall page provides clients with full control over their virtual machine's Proxmox firewall, including default policies and individual traffic rules.
 
@@ -45,6 +45,7 @@ Rules are evaluated in order from top to bottom. The drag handle (grid icon) on 
 Click the red delete button on the right side of a rule row to remove it. The rule is deleted immediately.
 
 ![Firewall rules page](../img/client-area-firewall-rules.png)
+*client-area-firewall-rules.png*
 
 ## How Rules Are Evaluated
 

@@ -1,7 +1,7 @@
 # Settings
 
 ### Proxmox KVM module **[WHMCS](https://puqcloud.com/link.php?id=77)**
-#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [FAQ](https://faq.puqcloud.com/)
+#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [Community](https://community.puqcloud.com/)
 
 The Settings section is divided into two pages: **General** and **Cron**.
 
@@ -12,6 +12,7 @@ The Settings section is divided into two pages: **General** and **Cron**.
 Navigate to **Addons > PUQ Proxmox KVM > Settings > General**.
 
 ![General Settings](../img/addon-settings-general.png)
+*addon-settings-general.png*
 
 ### API Timeouts
 
@@ -42,12 +43,14 @@ Navigate to **Addons > PUQ Proxmox KVM > Settings > Cron**.
 ### WHMCS Hook Mode
 
 ![Cron Settings — WHMCS mode](../img/addon-settings-cron.png)
+*addon-settings-cron.png*
 
 In this mode, cron tasks run automatically as part of the WHMCS system cron. No additional configuration is needed.
 
 ### Standalone Mode
 
 ![Cron Settings — Standalone mode](../img/addon-settings-cron-standalone.png)
+*addon-settings-cron-standalone.png*
 
 In standalone mode, you run the cron file directly via system crontab:
 
@@ -72,6 +75,7 @@ In standalone mode, you run the cron file directly via system crontab:
 ### CLI Tools
 
 ![Cron CLI help](../img/addon-cron-cli-help.png)
+*addon-cron-cli-help.png*
 
 The standalone cron file supports command-line arguments:
 

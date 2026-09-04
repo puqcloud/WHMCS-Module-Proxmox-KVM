@@ -1,7 +1,7 @@
 # Description
 
 ### Proxmox KVM module **[WHMCS](https://puqcloud.com/link.php?id=77)**
-#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [FAQ](https://faq.puqcloud.com/)
+#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [Community](https://community.puqcloud.com/)
 
 ## Proxmox KVM WHMCS Module
 
@@ -15,6 +15,8 @@ The module is intended for advanced users — installation and correct configura
 
 > **New in v3.3.** Full WHMCS Configurable Options coverage — 18 distinct options with clean plain-English names cover every per-service customisation (CPU, RAM, every disk size / bandwidth / IOPS, network bandwidth, IP counts, OS, backups, snapshots). Every option has a sensible default in Module Settings so products work out of the box. Disk downgrades are blocked by a three-layer safety net; selecting `Additional Disk = 0` cleanly removes the extra disk. See the [Changelog](02-changelog.md) and the [Configurable Options chapter](05-admin-area/03-configurable-options.md) for details.
 
+> **New in v4.0.** Dual-mode snapshot system (scheduled automatic snapshots with automated FIFO rotation or lifetime cleanup), streamlined client area interface matching backups, modernized usage charts, ionCube 15 support, and comprehensive multi-language translations across 25 languages.
+
 ### Installation service
 
 If you don't feel comfortable performing the installation yourself, PUQcloud offers an installation service in two variants — **module installation and configuration** and **full implementation**. See [puqcloud.com](https://puqcloud.com/whmcs-module-proxmox-kvm.php) for details.
@@ -27,7 +29,7 @@ If you don't feel comfortable performing the installation yourself, PUQcloud off
 - **Post-clone migration** — automatic VM migration to the target node with correct storage after cloning, supporting cross-node deployment with local storage
 - **VM lifecycle management** — create, suspend, unsuspend, terminate, reinstall, change package (upgrade/downgrade) with step-by-step state machine and retry logic
 - **Firewall management** — configurable firewall policies, anti-spoofing IPSet rules, and client-side firewall rule management (add, delete, reorder)
-- **Snapshot management** — create, rollback, and remove snapshots with configurable lifetime and automatic cleanup
+- **Snapshot management** — dual-mode: automated scheduled snapshots with FIFO rotation (identical to backups) or manual snapshots with configurable lifetime cleanup; instant rollback and removal
 - **Backup management** — manual and scheduled backups with restore capability, per-day schedule configuration
 - **IPv4/IPv6 IP address pool management** — centralized IP allocation with per-server pools, automatic bridge/VLAN selection
 - **DNS zone management** — Cloudflare and HestiaCP integration for forward and reverse DNS automation
@@ -43,14 +45,14 @@ If you don't feel comfortable performing the installation yourself, PUQcloud off
 
 ---
 
-## System Requirements
+## System requirements
 
-| Requirement | Minimum          |
-|-------------|------------------|
-| WHMCS | 8.x or higher    |
-| PHP | 7.4, 8.1, or 8.2 |
-| Proxmox VE | 8.x or higher    |
-| ionCube Loader | v13 or newer     |
+| Requirement | Minimum |
+|-------------|---------|
+| **WHMCS** | 8.x+, 9.x+. |
+| **PHP** | 7.4, 8.1, 8.2, 8.3, 8.4 |
+| **Proxmox VE** | 7.x+, 8.x+ |
+| **ionCube Loader** | v15+ |
 
 ---
 
@@ -85,15 +87,19 @@ The **Addon Module** is required for the server module to function. It manages:
 ### Client Area — VM Overview
 
 ![Client area overview](img/client-area-manage-overview.png)
+*client-area-manage-overview.png*
 
 ### Client Area — Firewall Rules
 
 ![Client area firewall](img/client-area-firewall-rules.png)
+*client-area-firewall-rules.png*
 
 ### Admin Area — Product Configuration
 
 ![Admin product config](img/admin-product-config-full.png)
+*admin-product-config-full.png*
 
 ### Addon Module — Dashboard
 
 ![Addon dashboard](img/addon-dashboard-home.png)
+*addon-dashboard-home.png*

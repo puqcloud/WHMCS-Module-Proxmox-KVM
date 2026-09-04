@@ -1,7 +1,33 @@
 # Changelog
 
 ### Proxmox KVM module **[WHMCS](https://puqcloud.com/link.php?id=77)**
-#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [FAQ](https://faq.puqcloud.com/)
+#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [Community](https://community.puqcloud.com/)
+
+---
+
+## v4.0.0 — 03-09-2026
+
+Major release: Dual-mode snapshot architecture, unified client UX matching backups, modernized usage charts, ionCube 15 support, and comprehensive multi-language synchronization.
+
+### Dual-Mode Snapshot System
+
+- **Snapshot Schedule Mode**: New product setting allowing automated weekly scheduled snapshots with automatic FIFO rotation, functioning identically to scheduled backups.
+- **Automated Rotation**: When the snapshot quota (e.g. 3/3) is reached, the oldest snapshot is automatically purged before creating the new scheduled snapshot.
+- **Dedicated Cron Task**: Registered `scheduleSnapshot` cron task running every 5 minutes to execute scheduled snapshots labeled `Scheduler: YYYY-MM-DD`.
+- **Self-Healing Schema Migration**: Automatic database column verification and dynamic migration (`vm_snapshot_schedule`, `vm_snapshot_last`).
+- **Dynamic Product Settings**: Enabling `Snapshot schedule mode` dynamically locks and disables `Snapshot lifetime`, preventing conflicting cleanup policies.
+
+### Client Area UI & UX Modernization
+
+- **Snapshots Page**: Rebuilt with simultaneous server-side rendering of the schedule card and loader spinners matching the backups page (no jumping elements or layout shifts).
+- **Usage Charts (`charts.tpl`)**: Completely refactored with dedicated cards for CPU & RAM, Disk I/O, and Network, integrated `kvmAjax` client, full localization, and responsive auto-scaling on window resize.
+
+### Localization & Compatibility
+
+- **25 Languages Synchronized**: Comprehensive audit and translation across all supported WHMCS languages.
+- **Ukrainian Language Compatibility**: Added support for both `ukranian` and `ukrainian` WHMCS naming standards.
+- **Two-Tier Fallback Loader**: Enhanced `puqProxmoxKVM_LoadLang()` to load base English defaults before applying user translations, eliminating blank strings.
+- **ionCube 15 Architecture**: Standardized packaging on ionCube 15 with universal out-of-the-box PHP support.
 
 ---
 

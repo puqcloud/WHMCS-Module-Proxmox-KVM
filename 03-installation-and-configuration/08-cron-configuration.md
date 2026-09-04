@@ -1,7 +1,7 @@
 # Cron Configuration
 
 ### Proxmox KVM module **[WHMCS](https://puqcloud.com/link.php?id=77)**
-#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [FAQ](https://faq.puqcloud.com/)
+#####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [Community](https://community.puqcloud.com/)
 
 ## Overview
 
@@ -44,6 +44,7 @@ To set up standalone cron, add the following to your server's crontab:
 ```
 
 ![Standalone cron settings](../img/addon-settings-cron-standalone.png)
+*addon-settings-cron-standalone.png*
 
 ## Configuring Cron Mode
 
@@ -56,6 +57,7 @@ The cron mode is configured in the addon settings:
 5. Save settings
 
 ![Cron settings page](../img/addon-settings-cron.png)
+*addon-settings-cron.png*
 
 ## Task Intervals
 

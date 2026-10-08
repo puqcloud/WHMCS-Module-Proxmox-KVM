@@ -41,6 +41,8 @@ If you don't feel comfortable performing the installation yourself, PUQcloud off
 - **Usage-based billing** — network traffic metering (inbound/outbound) with WHMCS Metric Billing
 - **Configurable client permissions** — per-product control over which features are available to customers (start, stop, noVNC, charts, reinstall, reset password, revDNS, ISO mount, firewall)
 - **Multi-language support** — 25 languages including Arabic, Azerbaijani, Catalan, Chinese, Croatian, Czech, Danish, Dutch, English, Estonian, Farsi, French, German, Hebrew, Hungarian, Italian, Macedonian, Norwegian, Polish, Romanian, Russian, Spanish, Swedish, Turkish, and Ukrainian
+- **SSH Key management** — complete OpenSSH public key management for clients (add, view, copy fingerprint, delete), integrated into order checkout and OS reinstallation with intelligent root password suppression and Cloud-Init injection
+- **Bulk provisioning queue** — configurable order queue threshold to prevent web server HTTP 504 timeouts during multi-VM checkouts
 - **Cron system** — flexible cron with two modes (WHMCS hook or standalone), configurable intervals per task, CLI tools, lock management
 - **Admin product settings UI** — custom Bootstrap-based settings panel for VM configuration, storage, network, firewall, integrations, email templates, and client permissions
 

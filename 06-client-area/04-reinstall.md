@@ -10,8 +10,9 @@ The Reinstall page allows clients to reinstall the operating system on their vir
 1. Navigate to the service and click **Reinstall** in the sidebar or from the action buttons on the overview page.
 2. A warning is displayed: reinstalling will **completely remove all data on all disks** of the virtual machine, and **all snapshots will also be deleted**.
 3. Select the desired operating system from the **Select operating system** dropdown. The available options are configured by the administrator in the product settings.
-4. To protect against accidental reinstallation, type the word **REINSTALL** in the confirmation field.
-5. Click the **Reinstall** button to begin the process.
+4. **Select SSH Keys:** If public SSH keys are saved in your account profile, choose which keys to automatically authorize on the new system. You can also click **Manage Keys** to open your key manager.
+5. To protect against accidental reinstallation, type the word **REINSTALL** in the confirmation field.
+6. Click the **Reinstall** button to begin the process.
 
 ![Reinstall page](../img/client-area-reinstall.png)
 *client-area-reinstall.png*
@@ -22,7 +23,7 @@ The Reinstall page allows clients to reinstall the operating system on their vir
 - All data on all disks is destroyed.
 - All existing snapshots are deleted.
 - The VM is redeployed from the selected OS template using the module's deploy pipeline.
-- Cloud-init configuration is reapplied (hostname, IP addresses, DNS, user credentials).
+- Cloud-init configuration is reapplied (hostname, IP addresses, DNS, user credentials, and selected SSH public keys).
 - **Network identity is preserved** — the original IPv4/IPv6 addresses, the **same network card MAC address**, the VLAN tag and the VMID are kept so that inventory systems, firewalls and DNS records continue to work without changes.
 - A new root password is generated and sent to the client via email.
 

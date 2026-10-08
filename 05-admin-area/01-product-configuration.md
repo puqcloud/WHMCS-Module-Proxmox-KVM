@@ -92,7 +92,7 @@ This section configures the virtual network adapter and IP addressing behavior f
 |---------|-------------|---------|
 | **Model** | The virtual network adapter model. **As in template** preserves the model defined in the Proxmox template. Other options: **VirtIO** (recommended for Linux), **Intel E1000**, **Realtek RTL8139**, **VMware vmxnet3**. | `As in template` |
 | **Bandwidth** | Maximum network bandwidth limit in MB/s. Set to **0** for unlimited bandwidth. Overridden by the `Network Bandwidth` Configurable Option when assigned. | `0` (unlimited) |
-| **Bridge** | The Proxmox network bridge to attach the VM's network adapter to (e.g., `vmbr0`, `vmbr1`). | `vmbr0` |
+| **Bridge** | The Proxmox network bridge to attach the VM's network adapter to (e.g., `vmbr0`, `vmbr1`). Bridges are loaded from Proxmox via AJAX. Click the refresh button to reload available bridges. | `vmbr0` |
 | **VLAN tag** | VLAN tag for the network adapter. Set to **0** for no VLAN tagging. Valid range: 0-4096. | `0` |
 | **IPv4 count** *(new in v3.3)* | Default number of IPv4 addresses to allocate from the pool. Overridden by the `IPv4 Addresses` Configurable Option when assigned. | `1` |
 | **IPv6 count** *(new in v3.3)* | Default number of IPv6 addresses to allocate from the pool. Overridden by the `IPv6 Addresses` Configurable Option when assigned. `0` = no IPv6. | `0` |
@@ -250,3 +250,25 @@ To enable metric billing:
 3. Enable the desired metrics and configure pricing
 
 The module's cron job collects bandwidth statistics from Proxmox and stores them in the `puqProxmoxKVM_statistics` table. The metric provider aggregates this data for WHMCS's billing calculations.
+
+---
+
+## Custom Fields (SSH Keys)
+
+To allow customers to select their saved public SSH keys or enter a new one during checkout (`cart.php`), the module uses a dedicated WHMCS Custom Field.
+
+![Product Custom Field: SSH Keys](../img/admin-product-config-ssh-customfield.png)
+*admin-product-config-ssh-customfield.png*
+
+### Field Configuration
+
+| Field Setting | Value | Description |
+|---|---|---|
+| **Field Name** | `ssh_key_ids\|SSH Keys` | Standard WHMCS custom field name format (`internal_name\|Display Name`). |
+| **Field Type** | `Text Box` | Stores comma-separated IDs of selected keys or an inline OpenSSH public key. |
+| **Description** | `Selected SSH key IDs or public key for Cloud-Init authentication` | Helpful admin hint. |
+| **Show on Order Form** | **Checked (Enabled)** | **Required.** WHMCS requires this checkbox to be enabled in order to accept and preserve the field's data submitted during order checkout. |
+| **Admin Only** | **Unchecked (Disabled)** | Must remain unchecked so that the order form processes client input. The module's frontend JavaScript and CSS automatically conceal the raw text box from the end user and replace it with a modern interactive SSH key selection widget. |
+| **Show on Invoice** | **Unchecked** | Not needed on client invoices. |
+
+> **Automated Setup:** The module automatically inspects and configures this custom field whenever products are saved or when the addon module is activated or upgraded. Administrators do not need to create it manually. Furthermore, the field is automatically hidden from the Client Area "Additional Information" block so customers never see raw IDs.

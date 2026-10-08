@@ -21,6 +21,15 @@ Navigate to **Addons > PUQ Proxmox KVM > Settings > General**.
 | **Default Timeout** | 10s | 1–300 | Timeout for Proxmox API requests from admin/client area pages |
 | **Heavy Operations Timeout** | 60s | 1–600 | Timeout for cron operations (deploy, clone, terminate, change package) |
 
+### Bulk Provisioning
+
+![Bulk Provisioning settings](../img/addon-settings-general-bulk-provisioning.png)
+*addon-settings-general-bulk-provisioning.png*
+
+| Setting | Default | Range | Description |
+|---------|---------|-------|-------------|
+| **Bulk Provisioning Queue Threshold** | 2 | 0–999 | When an order contains more than this number of VMs, they are queued for background provisioning via cron to prevent web server 504 timeouts during checkout. Orders with 3 or more VMs use the background queue. Set to `0` to queue all orders, or `999` to disable queue |
+
 ### VM Migration
 
 | Setting | Default | Description |
@@ -28,11 +37,36 @@ Navigate to **Addons > PUQ Proxmox KVM > Settings > General**.
 | **Enable post-clone migration** | Yes | When enabled, VMs cloned to the template node will be automatically migrated to the target node with the correct storage |
 | **Migration Timeout** | 300s | Maximum wait time per cron run for migration to complete. If exceeded, cron retries on next run |
 
+### Client Area SSH Keys
+
+![Client Area SSH Keys settings](../img/addon-settings-general-ssh-keys.png)
+*addon-settings-general-ssh-keys.png*
+
+| Setting | Default | Description |
+|---------|---------|-------------|
+| **Client Area Direct URL** | *Read-only* | Direct link for clients to access the standalone SSH Key Manager (`index.php?m=puq_proxmox_kvm&p=ssh_keys`). Convenient for custom links, portal buttons, or email templates |
+| **Enable SSH Key Manager in Client Area** | Enabled | Master toggle allowing clients to view, add, and manage their saved public SSH keys in the WHMCS Client Area |
+| **Add SSH Keys to Profile Menu** | Enabled | Automatically displays the **SSH Keys** menu item in the client profile / user dropdown ("Hello, {Name}!") |
+| **Add SSH Keys to Services Menu** | Enabled | Automatically displays the **SSH Keys** item in the main client navigation under **Services** |
+
 ### Module Data
 
 | Setting | Default | Description |
 |---------|---------|-------------|
 | **Delete all database tables** | No | When enabled, all module database tables are dropped on addon deactivation. When disabled (default), tables are preserved for safe updates |
+
+### Recommended Web Server & PHP Timeouts
+
+![Recommended Web Server & PHP Timeouts](../img/addon-settings-general-timeouts-guide.png)
+*addon-settings-general-timeouts-guide.png*
+
+To prevent HTTP 504 Gateway Timeouts, broken checkout sessions, and "Invalid Invoice ID" errors during customer checkout (particularly with multi-VM carts, PDF invoice creation, and SMTP mail delivery), we recommend configuring web server and PHP execution timeouts to **120 seconds or higher** (recommended: **300s**):
+
+- **PHP (`php.ini`):** `max_execution_time = 120` (or `300`), `max_input_time = 120`
+- **PHP-FPM (`www.conf`):** `request_terminate_timeout = 300s`
+- **Nginx (Apache reverse proxy):** `proxy_connect_timeout 300s; proxy_send_timeout 300s; proxy_read_timeout 300s;`
+- **Nginx (PHP-FPM direct):** `fastcgi_connect_timeout 300s; fastcgi_send_timeout 300s; fastcgi_read_timeout 300s;`
+- **Apache (`apache2.conf`):** `Timeout 300`
 
 ---
 

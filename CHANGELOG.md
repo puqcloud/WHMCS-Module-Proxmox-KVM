@@ -3,6 +3,50 @@
 ### Proxmox KVM module **[WHMCS](https://puqcloud.com/link.php?id=77)**
 #####  [Order now](https://puqcloud.com/whmcs-module-proxmox-kvm.php) | [Download](https://download.puqcloud.com/WHMCS/servers/PUQ_WHMCS-Proxmox-KVM/) | [Community](https://community.puqcloud.com/)
 
+## v4.1.0 — 08-10-2026
+
+Release 4.1.0 delivers powerful new capabilities to elevate your hosting experience: native **SSH Key Management** with zero-touch Cloud-Init injection, high-performance **Smart Bulk Provisioning**, seamless **Proxmox VE 9+ noVNC Web Console** integration, automated ISO mounting, dynamic network bridge discovery, robust OS reinstallation, and complete 26-language localization parity.
+
+### SSH Keys & Zero-Touch Authentication
+
+- **Client SSH Key Manager**: Clients can now store, label, and manage their OpenSSH public keys (`ssh-ed25519`, `ssh-rsa`, `ecdsa-sha2-*`) directly in the Client Area, complete with cryptographic fingerprint verification.
+- **Automated Cloud-Init Injection**: Stored SSH keys can be selected during shopping cart checkout (`cart.php`) and operating system reinstallation, automatically injecting authorized keys into the virtual machine for instant, secure passwordless login.
+- **Centralized Admin Oversight**: Administrators can view, filter, search, and manage all client SSH keys across the hosting platform from **Addons → PUQ Proxmox KVM → SSH Keys**.
+- **Flexible Navigation Shortcuts**: Configurable menu options in Addon settings allow administrators to place SSH key management shortcuts in the Client Area profile menu, services navigation, or both.
+
+### High-Speed Smart Bulk Provisioning
+
+- **Lightning-Fast Cart Checkout**: Eliminated shopping cart timeouts when clients purchase multiple virtual machines in a single order. Bulk orders now confirm and activate in milliseconds.
+- **Intelligent Background Provisioning Queue**: Multi-VM orders are automatically queued and provisioned sequentially in the background via the automated cron engine, preventing server overload and execution timeouts.
+- **Deferred Welcome Notifications**: Welcome emails with VM access credentials are automatically deferred until each virtual machine is fully cloned, configured, and running, ensuring clients always receive valid server details.
+- **Configurable Bulk Threshold**: Hosting providers can easily customize the queue activation threshold (`bulk_provision_threshold`) in Addon Module General Settings to tailor provisioning behavior to their infrastructure.
+
+### Proxmox VE 9+ Console & Virtual Media
+
+- **Proxmox VE 9+ noVNC Compatibility**: Full out-of-the-box compatibility with Proxmox VE 9+, delivering fast, reliable, direct HTML5 noVNC console connections without connection drops or proxy timeouts.
+- **Automated CD-ROM Auto-Provisioning**: The deployment engine now automatically detects and attaches a virtual CD-ROM drive to newly cloned VMs. Clients can seamlessly mount custom ISOs and boot rescue images, even when deploying modern Cloud-Init templates that lack a default optical drive.
+
+### Network & Infrastructure Automation
+
+- **Dynamic Network Bridge Discovery**: Product configuration now features an interactive AJAX bridge selector that automatically discovers active Linux Bridges (`vmbr0`, `vmbr1`), Open vSwitch (OVS) bridges, and Proxmox SDN VNets across cluster nodes.
+- **Reliable Lifecycle & Termination Sync**: Enhanced termination automation guarantees that cancelling or terminating an expired service completely frees cluster resources, releases IP pool allocations, and synchronizes WHMCS service status to `Terminated`.
+
+### Flawless OS Reinstallation
+
+- **Universal Template Resolution**: Overhauled OS reinstallation and provisioning logic to dynamically discover and validate template availability across cluster nodes, ensuring 100% reliable reinstall operations on existing virtual machines.
+- **Enhanced Confirmation & Safety Modals**: Upgraded reinstallation dialogs with clear safety warnings and confirmation inputs to prevent accidental data loss.
+
+### Global Localization (26 Languages)
+
+- **Complete 26-Language Parity**: Full translation coverage across all 26 supported WHMCS languages with 100% dictionary key parity.
+- **Native User Experience**: Every client-facing prompt, reinstallation dialog, virtual machine deletion notice, and power action notification is fully localized in the client's chosen language.
+
+### Enterprise Security & Architecture
+
+- **CSRF Protection Across All Operations**: Integrated robust anti-CSRF token verification across all client and administrator actions, protecting snapshots, backups, firewall rules, and OS reinstalls.
+- **Resilient Usage Metrics**: Isolated resource usage metrics collection ensuring that statistical queries for individual VMs run independently without affecting cluster-wide billing data.
+- **Performance & Environment Guidance**: Integrated built-in web server and PHP performance recommendations directly into the module settings, helping administrators optimize their hosting environment for peak efficiency.
+
 ---
 
 ## v4.0.0 — 03-09-2026

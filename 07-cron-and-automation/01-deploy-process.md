@@ -5,7 +5,12 @@
 
 ## Overview
 
-When a new virtual machine is provisioned (from a WHMCS order, an admin **Create** action, or the WHMCS API), the module does **not** try to do everything inside the HTTP request. Instead it just writes the VM record with status `creation` and returns immediately — WHMCS sees the order as "accepted" within milliseconds. The actual work is done by the cron task **Process VMs** as a 15-step state machine. Each step is idempotent and resumable: if anything fails, the VM stays at its current step and the next cron tick retries it.
+When a new virtual machine is provisioned (from a WHMCS order, an admin **Create** action, or the WHMCS API), the module uses an asynchronous **15-step state machine** managed by the **Process VMs** cron task. Each step is idempotent and resumable: if anything fails, the VM stays at its current step and the next cron tick retries it.
+
+Starting with v4.1.0, the module features **Smart Hybrid Provisioning**:
+- **Single-VM Orders and Admin Actions:** Can be provisioned directly or queued based on configuration. Direct admin actions from the service details page execute immediately.
+- **Bulk Orders (Multi-VM Carts):** When an order contains more VMs than the configured `bulk_provision_threshold` (default: 2, so orders with 3 or more VMs), `puqProxmoxKVM_CreateAccount` immediately registers the service, sets `vm_status` to `creation`, and returns `success` to WHMCS in milliseconds (~0.04s). This completely eliminates web server timeouts (HTTP 504 Gateway Timeout) during checkout.
+- **Premature Welcome Email Suppression:** WHMCS normally attempts to send the product's Welcome Email synchronously during checkout upon `CreateAccount` returning `success`. For queued VMs, the module's `EmailPreSend` hook automatically intercepts and suppresses this premature email. This saves 5–8 seconds of SMTP latency per VM and ensures clients only receive their access details once the VM is fully running via the "VM Ready" email at the end of the pipeline.
 
 This design makes the module resilient to:
 
@@ -13,6 +18,7 @@ This design makes the module resilient to:
 - Cluster-wide task queue back-pressure
 - Transient network failures between the WHMCS host and Proxmox
 - Long-running operations (disk resize, full clones, cross-node migration)
+- Web server gateway timeouts during multi-item client checkouts
 
 ## Deploy Pipeline
 
@@ -97,6 +103,13 @@ The most recent 50 runs are kept per VM. If the last attempt paused partway, the
 
 Target node selection considers storage availability and free RAM on candidate nodes. If no suitable target is found, the VM stays on Node A and deployment completes there — the VM is still fully functional, just not on the preferred node.
 
+### Clone Lock Safeguard
+
+During the `set_dns → migrated` transition, the module checks whether Proxmox is still finalizing the asynchronous disk clone operation (where Proxmox holds a task lock `vm_remote_lock = 'clone'`). If Proxmox reports that the VM disk is locked or the clone task has not fully completed:
+- The migration step safely pauses with the status `VM not found on any node yet — will retry` or `VM clone locked`.
+- It does **not** fail or abort deployment.
+- On the next cron tick, once Proxmox finishes the clone task and releases the lock, migration proceeds smoothly.
+
 ## What triggers a deploy
 
 A deploy starts the moment `vm_status` is set to `creation`. That happens when:
@@ -107,6 +120,79 @@ A deploy starts the moment `vm_status` is set to `creation`. That happens when:
 - A **Redeploy** action resets the VM record (deletes the existing VM on Proxmox, clears logs, sets status to `creation`).
 
 From the moment `creation` is written, the next cron tick picks up the VM. At the default 1-minute **Process VMs** interval, that means provisioning starts within 60 seconds of the trigger.
+
+## Web Server & PHP Timeout Recommendations for Deploy & Checkout
+
+### Why Timeouts Happen During Checkout
+
+When a client places an order in WHMCS (especially multi-item cart orders with multiple VMs), WHMCS performs a chain of heavy sequential operations inside a single HTTP request (`cart.php?a=checkout`):
+
+1. **Invoice Generation:** Compiling line items and generating PDF invoices via TCPDF.
+2. **Synchronous Email Delivery:** Sending invoice and order confirmation emails via external SMTP servers (each email can take 4–8 seconds depending on mail server latency).
+3. **Payment Processing:** Applying account credit or third-party payment gateway callbacks and executing invoice payment hooks.
+4. **Third-Party Hooks:** Running fraud detection, sanction checkers, or anti-fraud plugins.
+5. **Module Provisioning:** Invoking `CreateAccount` for each purchased item.
+
+If your web server or PHP interpreter is configured with short default timeouts (such as Nginx's default 30-second or 60-second proxy timeout), the web server will terminate the connection with an **HTTP 504 Gateway Timeout**. This abruptly terminates PHP execution before WHMCS can finalize the session (`$_SESSION['orderdetails']`), resulting in:
+- The client being redirected to `cart.php?a=complete` with an **"Invalid Invoice ID"** error.
+- Orders remaining in `Pending` status despite the invoice being marked `Paid`.
+- Services left unprovisioned.
+
+### Recommended Timeout Configuration
+
+While every hosting provider and infrastructure administrator must choose settings appropriate for their specific architecture, we strongly recommend configuring script execution and proxy timeouts to **at least 120 seconds**, with **300 seconds** being optimal for high-volume WHMCS environments.
+
+#### 1. PHP Configuration (`php.ini` & PHP-FPM `www.conf`)
+
+In your active PHP configuration (e.g. `/etc/php/8.x/fpm/php.ini`):
+
+```ini
+; Maximum execution time of each script, in seconds
+max_execution_time = 120    ; Recommended: 120 to 300
+
+; Maximum amount of time each script may spend parsing request data
+max_input_time = 120        ; Recommended: 120 to 300
+```
+
+In your PHP-FPM pool configuration (e.g. `/etc/php/8.x/fpm/pool.d/www.conf`):
+
+```ini
+; The timeout for serving a single request after which the worker process will be killed
+request_terminate_timeout = 300s
+```
+
+#### 2. Nginx with Apache Reverse Proxy
+
+If Nginx operates as a reverse proxy in front of Apache (common in cPanel, Plesk, and HestiaCP):
+
+```nginx
+# /etc/nginx/conf.d/timeout.conf or within the server/location block:
+proxy_connect_timeout 300s;
+proxy_send_timeout    300s;
+proxy_read_timeout    300s;
+```
+
+#### 3. Nginx with PHP-FPM (Standalone Nginx)
+
+If Nginx connects directly to PHP-FPM via FastCGI:
+
+```nginx
+# /etc/nginx/conf.d/timeout.conf or within the location ~ \.php$ block:
+fastcgi_connect_timeout 300s;
+fastcgi_send_timeout    300s;
+fastcgi_read_timeout    300s;
+```
+
+#### 4. Apache Web Server
+
+In the Apache configuration (`/etc/apache2/apache2.conf` or `/etc/httpd/conf/httpd.conf`):
+
+```apache
+# Timeout: The number of seconds before receives and sends time out.
+Timeout 300
+```
+
+After modifying these configuration files, reload or restart the respective services (e.g. `systemctl reload nginx php8.x-fpm apache2`).
 
 ## Related reading
 

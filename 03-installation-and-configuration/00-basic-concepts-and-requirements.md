@@ -19,6 +19,44 @@ The following PHP extensions must be enabled on the WHMCS server:
 - **cURL** (`curl`) — required for API communication with Proxmox
 - **JSON** (`json`) — required for parsing API responses
 
+## Recommended Web Server & PHP Timeouts
+
+When processing WHMCS orders (especially bulk orders containing multiple VMs), WHMCS performs multi-step sequential tasks: generating PDF invoices via TCPDF, connecting to external SMTP servers, executing payment gateway callbacks, and running provisioning hooks.
+
+To prevent HTTP 504 Gateway Timeouts, interrupted orders, and broken checkout sessions, we recommend setting script execution and proxy timeouts to **at least 120 seconds** (recommended: **300 seconds** for production environments):
+
+| Environment / Directive | Recommended Setting | File Location |
+|-------------------------|---------------------|---------------|
+| `max_execution_time` | `120` to `300` | `php.ini` |
+| `max_input_time` | `120` to `300` | `php.ini` |
+| `request_terminate_timeout` | `300s` | PHP-FPM `www.conf` |
+| **Nginx + Apache Proxy** | `proxy_*_timeout 300s;` | `/etc/nginx/conf.d/timeout.conf` |
+| **Nginx + PHP-FPM** | `fastcgi_*_timeout 300s;` | `/etc/nginx/conf.d/timeout.conf` |
+| **Apache Standalone** | `Timeout 300` | `/etc/apache2/apache2.conf` |
+
+#### Configuration Examples:
+
+**Nginx Reverse Proxy (Apache Backend):**
+```nginx
+proxy_connect_timeout 300s;
+proxy_send_timeout    300s;
+proxy_read_timeout    300s;
+```
+
+**Nginx Direct FastCGI (PHP-FPM):**
+```nginx
+fastcgi_connect_timeout 300s;
+fastcgi_send_timeout    300s;
+fastcgi_read_timeout    300s;
+```
+
+**Apache:**
+```apache
+Timeout 300
+```
+
+> **Note:** Each hosting administrator should adjust these values to suit their infrastructure. However, a timeout of 120s or higher is strongly recommended to guarantee smooth checkout and provisioning.
+
 ## Network Requirements
 
 The WHMCS server must be able to reach the Proxmox API over the network on **port 8006** (HTTPS). Ensure that any firewalls between the WHMCS server and the Proxmox host allow outbound TCP connections on this port.
